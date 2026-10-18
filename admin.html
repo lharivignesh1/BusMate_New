@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BusMate | Admin Dashboard</title>
+
+    <style>
+        :root {
+            --purple: #6d28d9;
+            --purple-dark: #4c1d95;
+            --pink: #ec4899;
+            --background: #f7f5ff;
+            --white: #ffffff;
+            --text: #211a35;
+            --muted: #817a94;
+            --border: #ece8f5;
+            --green: #16a34a;
+            --red: #dc2626;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: "Segoe UI", Arial, sans-serif;
+        }
+
+        body {
+            background: var(--background);
+            color: var(--text);
+        }
+
+        button, input, select {
+            font: inherit;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        .layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 250px;
+            flex-shrink: 0;
+            padding: 26px 18px;
+            color: white;
+            background: linear-gradient(160deg, #4c1d95, #7c3aed 65%, #db2777);
+        }
+
+        .brand {
+            font-size: 27px;
+            font-weight: 800;
+            margin: 0 0 8px 10px;
+        }
+
+        .brand span {
+            color: #f9a8d4;
+        }
+
+        .sidebar small {
+            display: block;
+            margin: 0 0 35px 10px;
+            color: #e9d5ff;
+        }
+
+        .nav-button {
+            display: block;
+            width: 100%;
+            padding: 14px 15px;
+            margin-bottom: 8px;
+            color: #ede9fe;
+            text-align: left;
+            background: transparent;
+            border: none;
+            border-radius: 12px;
+            transition: .2s;
+        }
+
+        .nav-button:hover,
+        .nav-button.active {
+            background: rgba(255,255,255,.18);
+            color: white;
+            transform: translateX(3px);
+        }
+
+        .main {
+            flex: 1;
+            min-width: 0;
+            padding: 28px;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 25px;
+        }
+
+        h1 {
+            font-size: clamp(24px, 3vw, 32px);
+        }
+
+        .subtitle {
+            color: var(--muted);
+            margin-top: 6px;
+        }
+
+        .profile {
+            background: white;
+            padding: 12px 18px;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            font-weight: 600;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 18px;
+            margin-bottom: 25px;
+        }
+
+        .card {
+            background: white;
+            padding: 23px;
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            box-shadow: 0 8px 25px rgba(65, 40, 120, .045);
+            transition: transform .2s, box-shadow .2s;
+        }
+
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(65, 40, 120, .09);
+        }
+
+        .stat-label {
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .stat-number {
+            font-size: 30px;
+            font-weight: 800;
+            margin-top: 12px;
+            color: var(--purple-dark);
+        }
+
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .toolbar h2 {
+            font-size: 21px;
+        }
+
+        .toolbar-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            border: none;
+            border-radius: 10px;
+            padding: 11px 16px;
+            font-weight: 650;
+            transition: .2s;
+        }
+
+        .btn-primary {
+            color: white;
+            background: linear-gradient(110deg, var(--purple), var(--pink));
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px #6d28d944;
+        }
+
+        .btn-light {
+            background: #f1ebff;
+            color: var(--purple-dark);
+        }
+
+        .btn-danger {
+            background: #fee2e2;
+            color: var(--red);
+        }
+
+        .search {
+            width: min(280px, 100%);
+            padding: 11px 14px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            outline: none;
+            background: white;
+        }
+
+        .search:focus,
+        input:focus,
+        select:focus {
+            border-color: var(--purple);
+            box-shadow: 0 0 0 3px #6d28d91c;
+        }
+
+        .table-wrap {
+            overflow-x: auto;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            min-width: 720px;
+        }
+
+        th, td {
+            padding: 15px 17px;
+            text-align: left;
+            border-bottom: 1px solid #f0edf6;
+            font-size: 14px;
+        }
+
+        th {
+            color: #6b6280;
+            background: #faf9ff;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: .5px;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 6px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .badge-green {
+            color: #166534;
+            background: #dcfce7;
+        }
+
+        .badge-yellow {
+            color: #92400e;
+            background: #fef3c7;
+        }
+
+        .badge-red {
+            color: #991b1b;
+            background: #fee2e2;
+        }
+
+        .section {
+            display: none;
+            animation: appear .25s ease;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes appear {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .notice {
+            display: none;
+            margin-bottom: 18px;
+            padding: 13px 15px;
+            border-radius: 12px;
+        }
+
+        .notice.success {
+            display: block;
+            color: #166534;
+            background: #dcfce7;
+        }
+
+        .notice.error {
+            display: block;
+            color: #991b1b;
+            background: #fee2e2;
+        }
+
+        .empty {
+            padding: 35px;
+            color: var(--muted);
+            text-align: center;
+        }
+
+        .modal {
+            position: fixed;
+            inset: 0;
+            z-index: 10;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background: #211a3580;
+        }
+
+        .modal.open {
+            display: flex;
+        }
+
+        .modal-content {
+            width: min(500px, 100%);
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 25px;
+            border-radius: 20px;
+            background: white;
+            animation: appear .2s ease;
+        }
+
+        .modal-content h2 {
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 7px;
+            font-size: 13px;
+            font-weight: 650;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            outline: none;
+            background: white;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 22px;
+        }
+
+        .loading {
+            color: var(--muted);
+            padding: 25px;
+            text-align: center;
+        }
+
+        @media(max-width: 1000px) {
+            .stats {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .sidebar {
+                width: 210px;
+            }
+        }
+
+        @media(max-width: 650px) {
+            .layout {
+                display: block;
+            }
+
+            .sidebar {
+                width: 100%;
+                padding: 15px;
+            }
+
+            .brand {
+                font-size: 23px;
+            }
+
+            .sidebar small {
+                margin-bottom: 15px;
+            }
+
+            .nav-button {
+                display: inline-block;
+                width: auto;
+                margin: 0 3px 5px 0;
+                padding: 10px;
+            }
+
+            .main {
+                padding: 18px 12px;
+            }
+
+            .stats {
+                gap: 10px;
+            }
+
+            .card {
+                padding: 15px;
+            }
+
+            .stat-number {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<div class="layout">
+
+    <aside class="sidebar">
+        <div class="brand">Bus<span>Mate.</span></div>
+        <small>Administration portal</small>
+
+        <button class="nav-button active" data-section="overview">▦ Overview</button>
+        <button class="nav-button" data-section="students">♙ Students</button>
+        <button class="nav-button" data-section="drivers">♧ Drivers</button>
+        <button class="nav-button" data-section="buses">🚌 Buses</button>
+        <button class="nav-button" data-section="routes">⌖ Routes</button>
+        <button class="nav-button" data-section="requests">✉ Bus Requests</button>
+
+        <button class="nav-button" id="logoutButton" style="margin-top:25px">
+            ↪ Logout
+        </button>
+    </aside>
+
+    <main class="main">
+        <header class="topbar">
+            <div>
+                <h1 id="pageTitle">Dashboard Overview</h1>
+                <p class="subtitle">Manage BusMate from one place.</p>
+            </div>
+
+            <div class="profile">🛡️ Administrator</div>
+        </header>
+
+        <div id="notice" class="notice"></div>
+
+        <section id="overview" class="section active">
+            <div class="stats">
+                <div class="card">
+                    <div class="stat-label">Total Students</div>
+                    <div class="stat-number" id="totalStudents">—</div>
+                </div>
+                <div class="card">
+                    <div class="stat-label">Total Drivers</div>
+                    <div class="stat-number" id="totalDrivers">—</div>
+                </div>
+                <div class="card">
+                    <div class="stat-label">Total Buses</div>
+                    <div class="stat-number" id="totalBuses">—</div>
+                </div>
+                <div class="card">
+                    <div class="stat-label">Pending Requests</div>
+                    <div class="stat-number" id="totalRequests">—</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="toolbar">
+                    <h2>System status</h2>
+                    <button class="btn btn-primary" onclick="refreshAll()">
+                        ↻ Refresh data
+                    </button>
+                </div>
+                <p id="systemStatus" class="subtitle">
+                    Checking connection to the BusMate backend...
+                </p>
+            </div>
+        </section>
+
+        <section id="students" class="section">
+            <div class="card">
+                <div class="toolbar">
+                    <h2>Student management</h2>
+                    <div class="toolbar-actions">
+                        <input class="search" id="studentSearch"
+                               placeholder="Search name, roll number or email">
+                        <button class="btn btn-primary"
+                                onclick="openForm('students')">+ Add student</button>
+                    </div>
+                </div>
+                <div id="studentsTable" class="loading">Loading students...</div>
+            </div>
+        </section>
+
+        <section id="drivers" class="section">
+            <div class="card">
+                <div class="toolbar">
+                    <h2>Driver management</h2>
+                    <div class="toolbar-actions">
+                        <input class="search" id="driverSearch"
+                               placeholder="Search driver or email">
+                        <button class="btn btn-primary"
+                                onclick="openForm('drivers')">+ Add driver</button>
+                    </div>
+                </div>
+                <div id="driversTable" class="loading">Loading drivers...</div>
+            </div>
+        </section>
+
+        <section id="buses" class="section">
+            <div class="card">
+                <div class="toolbar">
+                    <h2>Bus management</h2>
+                    <div class="toolbar-actions">
+                        <input class="search" id="busSearch"
+                               placeholder="Search bus number">
+                        <button class="btn btn-primary"
+                                onclick="openForm('buses')">+ Add bus</button>
+                    </div>
+                </div>
+                <div id="busesTable" class="loading">Loading buses...</div>
+            </div>
+        </section>
+
+        <section id="routes" class="section">
+            <div class="card">
+                <div class="toolbar">
+                    <h2>Route management</h2>
+                    <button class="btn btn-primary"
+                            onclick="openForm('routes')">+ Add route</button>
+                </div>
+                <div id="routesTable" class="loading">Loading routes...</div>
+            </div>
+        </section>
+
+        <section id="requests" class="section">
+            <div class="card">
+                <div class="toolbar">
+                    <h2>Extra-bus requests</h2>
+                    <button class="btn btn-light" onclick="loadRequests()">↻ Refresh</button>
+                </div>
+                <div id="requestsTable" class="loading">Loading requests...</div>
+            </div>
+        </section>
+    </main>
+</div>
+
+<div class="modal" id="editorModal">
+    <div class="modal-content">
+        <h2 id="formTitle">Add record</h2>
+        <form id="editorForm">
+            <div id="formFields"></div>
+            <div class="modal-actions">
+                <button type="button" class="btn btn-light"
+                        onclick="closeForm()">Cancel</button>
+                <button class="btn btn-primary" type="submit">Save to database</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    /*
+      API CONTRACT:
+      GET    /api/admin/summary
+      GET    /api/admin/students
+      POST   /api/admin/students
+      PUT    /api/admin/students/{id}
+      GET    /api/admin/drivers
+      POST   /api/admin/drivers
+      PUT    /api/admin/drivers/{id}
+      GET    /api/admin/buses
+      POST   /api/admin/buses
+      PUT    /api/admin/buses/{id}
+      GET    /api/admin/routes
+      POST   /api/admin/routes
+      PUT    /api/admin/routes/{id}
+      GET    /api/admin/requests
+      PUT    /api/admin/requests/{id}
+    */
+
+    const API = "/api";
+    const state = {
+        students: [],
+        drivers: [],
+        buses: [],
+        routes: [],
+        requests: [],
+        editing: null,
+        formType: null
+    };
+
+    const titles = {
+        overview: "Dashboard Overview",
+        students: "Student Management",
+        drivers: "Driver Management",
+        buses: "Bus Management",
+        routes: "Route Management",
+        requests: "Extra-bus Requests"
+    };
+
+    async function api(path, options = {}) {
+        const response = await fetch(API + path, {
+            credentials: "same-origin",
+            ...options,
+            headers: {
+                "Content-Type": "application/json",
+                ...(options.headers || {})
+            }
+        });
+
+        if (response.status === 401 || response.status === 403) {
+            throw new Error("Your session is invalid or you do not have permission.");
+        }
+
+        const text = await response.text();
+        let data = {};
+        if (text) {
+            try { data = JSON.parse(text); }
+            catch { data = { message: text }; }
+        }
+
+        if (!response.ok) {
+            throw new Error(data.message || "Request failed.");
+        }
+
+        return data;
+    }
+
+    function showNotice(message, type = "success") {
+        const box = document.getElementById("notice");
+        box.textContent = message;
+        box.className = "notice " + type;
+
+        setTimeout(() => {
+            box.className = "notice";
+        }, 4500);
+    }
+
+    function escapeHtml(value) {
+        return String(value ?? "").replace(/[&<>"']/g, c => ({
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': "&quot;",
+            "'": "&#39;"
+        })[c]);
+    }
+
+    function renderTable(containerId, headers, rows) {
+        const container = document.getElementById(containerId);
+
+        if (!rows.length) {
+            container.innerHTML = '<div class="empty">No records found.</div>';
+            return;
+        }
+
+        container.innerHTML = `
+            <div class="table-wrap">
+                <table>
+                    <thead><tr>${headers.map(h => `<th>${h}</th>`).join("")}</tr></thead>
+                    <tbody>${rows.join("")}</tbody>
+                </table>
+            </div>`;
+    }
+
+    function actionButtons(type, item) {
+        return `
+            <button class="btn btn-light"
+                    onclick="openForm('${type}', ${Number(item.id)})">Edit</button>
+            <button class="btn btn-danger"
+                    onclick="toggleRecord('${type}', ${Number(item.id)}, ${!item.active})">
+                ${item.active ? "Deactivate" : "Activate"}
+            </button>`;
+    }
+
+    async function loadSummary() {
+        const data = await api("/admin/summary");
+        document.getElementById("totalStudents").textContent = data.students ?? "—";
+        document.getElementById("totalDrivers").textContent = data.drivers ?? "—";
+        document.getElementById("totalBuses").textContent = data.buses ?? "—";
+        document.getElementById("totalRequests").textContent = data.pendingRequests ?? "—";
+        document.getElementById("systemStatus").textContent =
+            "Connected to the BusMate backend.";
+    }
+
+    async function loadStudents() {
+        const data = await api("/admin/students");
+        state.students = data.items || data.students || data;
+        renderStudents();
+    }
+
+    function renderStudents() {
+        const q = (document.getElementById("studentSearch").value || "").toLowerCase();
+        const list = state.students.filter(s =>
+            [s.fullName, s.name, s.rollNumber, s.email]
+                .some(v => String(v || "").toLowerCase().includes(q))
+        );
+
+        renderTable("studentsTable",
+            ["Name", "Roll number", "Email", "Status", "Actions"],
+            list.map(s => `<tr>
+                <td>${escapeHtml(s.fullName || s.name)}</td>
+                <td>${escapeHtml(s.rollNumber)}</td>
+                <td>${escapeHtml(s.email)}</td>
+                <td><span class="badge ${s.active ? "badge-green" : "badge-red"}">
+                    ${s.active ? "Active" : "Inactive"}</span></td>
+                <td>${actionButtons("students", {
+                    id: s.studentId ?? s.id, active: s.active
+                })}</td>
+            </tr>`)
+        );
+    }
+
+    async function loadDrivers() {
+        const data = await api("/admin/drivers");
+        state.drivers = data.items || data.drivers || data;
+        renderDrivers();
+    }
+
+    function renderDrivers() {
+        const q = (document.getElementById("driverSearch").value || "").toLowerCase();
+        const list = state.drivers.filter(d =>
+            [d.fullName, d.name, d.email, d.driverCode, d.busNumber]
+                .some(v => String(v || "").toLowerCase().includes(q))
+        );
+
+        renderTable("driversTable",
+            ["Driver", "Driver code", "Email", "Assigned bus", "Status", "Actions"],
+            list.map(d => `<tr>
+                <td>${escapeHtml(d.fullName || d.name)}</td>
+                <td>${escapeHtml(d.driverCode)}</td>
+                <td>${escapeHtml(d.email)}</td>
+                <td>${escapeHtml(d.busNumber || "Not assigned")}</td>
+                <td><span class="badge ${d.active ? "badge-green" : "badge-red"}">
+                    ${d.active ? "Active" : "Inactive"}</span></td>
+                <td>${actionButtons("drivers", {
+                    id: d.driverId ?? d.id, active: d.active
+                })}</td>
+            </tr>`)
+        );
+    }
+
+    async function loadBuses() {
+        const data = await api("/admin/buses");
+        state.buses = data.items || data.buses || data;
+        renderBuses();
+    }
+
+    function renderBuses() {
+        const q = (document.getElementById("busSearch").value || "").toLowerCase();
+        const list = state.buses.filter(b =>
+            String(b.busNumber || b.busName || "").toLowerCase().includes(q)
+        );
+
+        renderTable("busesTable",
+            ["Bus number", "Name", "Capacity", "Status", "Actions"],
+            list.map(b => `<tr>
+                <td>${escapeHtml(b.busNumber)}</td>
+                <td>${escapeHtml(b.busName)}</td>
+                <td>${escapeHtml(b.capacity)}</td>
+                <td><span class="badge ${b.active ? "badge-green" : "badge-red"}">
+                    ${b.active ? "Active" : "Inactive"}</span></td>
+                <td>${actionButtons("buses", {
+                    id: b.busId ?? b.id, active: b.active
+                })}</td>
+            </tr>`)
+        );
+    }
+
+    async function loadRoutes() {
+        const data = await api("/admin/routes");
+        state.routes = data.items || data.routes || data;
+        renderTable("routesTable",
+            ["Bus", "Area", "Pickup time", "Order", "Actions"],
+            state.routes.map(r => `<tr>
+                <td>${escapeHtml(r.busNumber)}</td>
+                <td>${escapeHtml(r.areaName)}</td>
+                <td>${escapeHtml(r.pickupTime)}</td>
+                <td>${escapeHtml(r.routeOrder)}</td>
+                <td><button class="btn btn-light"
+                    onclick="openForm('routes', ${Number(r.routeId ?? r.id)})">Edit</button></td>
+            </tr>`)
+        );
+    }
+
+    async function loadRequests() {
+        const data = await api("/admin/requests");
+        state.requests = data.items || data.requests || data;
+        renderTable("requestsTable",
+            ["Area", "Request count", "Student", "Status", "Actions"],
+            state.requests.map(r => `<tr>
+                <td>${escapeHtml(r.areaName)}</td>
+                <td>${escapeHtml(r.requestCount ?? 1)}</td>
+                <td>${escapeHtml(r.studentName)}</td>
+                <td><span class="badge ${
+                    r.requestStatus === "APPROVED" ? "badge-green" :
+                    r.requestStatus === "REJECTED" ? "badge-red" : "badge-yellow"
+                }">${escapeHtml(r.requestStatus || r.status)}</span></td>
+                <td>
+                    <button class="btn btn-primary"
+                        onclick="reviewRequest(${Number(r.requestId ?? r.id)}, 'APPROVED')">Approve</button>
+                    <button class="btn btn-danger"
+                        onclick="reviewRequest(${Number(r.requestId ?? r.id)}, 'REJECTED')">Reject</button>
+                </td>
+            </tr>`)
+        );
+    }
+
+    async function refreshAll() {
+        try {
+            await Promise.all([
+                loadSummary(), loadStudents(), loadDrivers(),
+                loadBuses(), loadRoutes(), loadRequests()
+            ]);
+            showNotice("Dashboard data refreshed.");
+        } catch (error) {
+            document.getElementById("systemStatus").textContent = error.message;
+            showNotice(error.message, "error");
+        }
+    }
+
+    document.querySelectorAll(".nav-button[data-section]").forEach(button => {
+        button.addEventListener("click", () => {
+            document.querySelectorAll(".nav-button[data-section]")
+                .forEach(b => b.classList.remove("active"));
+            document.querySelectorAll(".section")
+                .forEach(s => s.classList.remove("active"));
+
+            button.classList.add("active");
+            document.getElementById(button.dataset.section).classList.add("active");
+            document.getElementById("pageTitle").textContent = titles[button.dataset.section];
+        });
+    });
+
+    document.getElementById("studentSearch").addEventListener("input", renderStudents);
+    document.getElementById("driverSearch").addEventListener("input", renderDrivers);
+    document.getElementById("busSearch").addEventListener("input", renderBuses);
+
+    function field(name, label, type = "text", value = "", required = true) {
+        return `<div class="form-group">
+            <label for="f_${name}">${label}</label>
+            <input id="f_${name}" name="${name}" type="${type}"
+                   value="${escapeHtml(value)}"
+                   ${required ? "required" : ""}
+                   ${type === "password" ? 'autocomplete="new-password"' : ""}>
+        </div>`;
+    }
+
+    function openForm(type, id = null) {
+        state.formType = type;
+        state.editing = id;
+        const existingList = state[type] || [];
+        const item = id == null ? {} : existingList.find(x =>
+            Number(x.studentId ?? x.driverId ?? x.busId ?? x.routeId ?? x.id) === Number(id)
+        ) || {};
+
+        const formFields = document.getElementById("formFields");
+        document.getElementById("formTitle").textContent =
+            `${id == null ? "Add" : "Edit"} ${type.slice(0, -1)}`;
+
+        if (type === "students") {
+            formFields.innerHTML =
+                field("fullName", "Full name", "text", item.fullName || item.name || "") +
+                field("rollNumber", "Roll number", "text", item.rollNumber || "") +
+                field("email", "College email", "email", item.email || "") +
+                field("password", "Password (leave blank to keep unchanged)", "password", "", false);
+        } else if (type === "drivers") {
+            formFields.innerHTML =
+                field("fullName", "Full name", "text", item.fullName || item.name || "") +
+                field("driverCode", "Driver code", "text", item.driverCode || "") +
+                field("email", "Email", "email", item.email || "") +
+                field("busId", "Assigned bus ID", "number", item.busId || "") +
+                field("password", "Password (leave blank to keep unchanged)", "password", "", false);
+        } else if (type === "buses") {
+            formFields.innerHTML =
+                field("busNumber", "Bus number", "text", item.busNumber || "") +
+                field("busName", "Bus name", "text", item.busName || "") +
+                field("capacity", "Seat capacity", "number", item.capacity ?? 40);
+        } else if (type === "routes") {
+            formFields.innerHTML =
+                field("busId", "Bus ID", "number", item.busId || "") +
+                field("areaId", "Area ID", "number", item.areaId || "") +
+                field("pickupTime", "Pickup time (HH:MM)", "time", item.pickupTime || "06:00") +
+                field("routeOrder", "Route order", "number", item.routeOrder ?? 1);
+        }
+
+        document.getElementById("editorModal").classList.add("open");
+    }
+
+    function closeForm() {
+        document.getElementById("editorModal").classList.remove("open");
+    }
+
+    document.getElementById("editorForm").addEventListener("submit", async event => {
+        event.preventDefault();
+
+        const formData = Object.fromEntries(new FormData(event.target).entries());
+
+        for (const key of Object.keys(formData)) {
+            if (key === "password" && !formData[key]) {
+                delete formData[key];
+            } else if (formData[key] !== "" && key !== "password") {
+                if (["capacity", "busId", "areaId", "routeOrder"].includes(key)) {
+                    formData[key] = Number(formData[key]);
+                }
+            }
+        }
+
+        const id = state.editing;
+        const type = state.formType;
+        const path = `/admin/${type}` + (id == null ? "" : `/${id}`);
+
+        try {
+            await api(path, {
+                method: id == null ? "POST" : "PUT",
+                body: JSON.stringify(formData)
+            });
+
+            closeForm();
+            showNotice("Changes saved to the database.");
+            await refreshAll();
+        } catch (error) {
+            showNotice(error.message, "error");
+        }
+    });
+
+    async function toggleRecord(type, id, active) {
+        if (!confirm(`${active ? "Activate" : "Deactivate"} this record?`)) return;
+
+        try {
+            await api(`/admin/${type}/${id}`, {
+                method: "PUT",
+                body: JSON.stringify({ active })
+            });
+            showNotice("Status updated.");
+            await refreshAll();
+        } catch (error) {
+            showNotice(error.message, "error");
+        }
+    }
+
+    async function reviewRequest(id, requestStatus) {
+        try {
+            await api(`/admin/requests/${id}`, {
+                method: "PUT",
+                body: JSON.stringify({ requestStatus })
+            });
+            showNotice(`Request ${requestStatus.toLowerCase()}.`);
+            await loadRequests();
+            await loadSummary();
+        } catch (error) {
+            showNotice(error.message, "error");
+        }
+    }
+
+    document.getElementById("logoutButton").addEventListener("click", async () => {
+        try {
+            await api("/logout", { method: "POST", body: "{}" });
+        } catch (_) {}
+        location.href = "login.html";
+    });
+
+    refreshAll();
+</script>
+</body>
+</html>

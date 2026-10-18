@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>About Us | BusMate</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;600;700;800&display=swap"
+          rel="stylesheet">
+
+    <style>
+        :root {
+            --purple: #7657f6;
+            --pink: #ff77b7;
+            --text: #28243e;
+            --muted: #77758a;
+            --background: #fbfaff;
+            --border: #eeeafb;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            color: var(--text);
+            background:
+                radial-gradient(circle at 10% 10%, #f1edff 0, transparent 30%),
+                radial-gradient(circle at 90% 30%, #fff0f7 0, transparent 28%),
+                var(--background);
+            min-height: 100vh;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        /* Navigation */
+
+        .navbar {
+            min-height: 78px;
+            padding: 0 7%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(255, 255, 255, .88);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(16px);
+        }
+
+        .logo {
+            font-family: 'Manrope', sans-serif;
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--purple);
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .nav-links a:hover {
+            color: var(--purple);
+        }
+
+        .back-button {
+            padding: 11px 18px;
+            background: var(--purple);
+            color: white;
+            border-radius: 12px;
+            transition: .25s;
+        }
+
+        .back-button:hover {
+            color: white !important;
+            transform: translateY(-2px);
+        }
+
+        /* Hero */
+
+        .hero {
+            padding: 85px 7% 50px;
+            text-align: center;
+            animation: appear .8s ease both;
+        }
+
+        .eyebrow {
+            display: inline-block;
+            padding: 9px 16px;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 30px;
+            color: var(--purple);
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+        }
+
+        h1 {
+            font-family: 'Manrope', sans-serif;
+            font-size: clamp(36px, 5vw, 57px);
+            line-height: 1.2;
+            letter-spacing: -2px;
+            margin-top: 22px;
+        }
+
+        .gradient {
+            background: linear-gradient(100deg, var(--purple), var(--pink));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            max-width: 690px;
+            margin: 20px auto 0;
+            color: var(--muted);
+            font-size: 15px;
+            line-height: 1.9;
+        }
+
+        /* Team */
+
+        .team {
+            padding: 35px 7% 100px;
+        }
+
+        .team-heading {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .team-heading h2 {
+            font-family: 'Manrope', sans-serif;
+            font-size: 31px;
+        }
+
+        .team-heading p {
+            color: var(--muted);
+            margin-top: 10px;
+            font-size: 14px;
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 22px;
+        }
+
+        .member-card {
+            background: rgba(255, 255, 255, .94);
+            border: 1px solid var(--border);
+            border-radius: 23px;
+            overflow: hidden;
+            text-align: center;
+            padding: 25px 18px 27px;
+            box-shadow: 0 10px 35px rgba(51, 38, 110, .04);
+            transition: transform .35s, box-shadow .35s;
+            animation: rise .8s ease both;
+        }
+
+        .member-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 22px 50px rgba(51, 38, 110, .12);
+        }
+
+        /* Clickable profile photo */
+
+        .photo-frame {
+            width: 145px;
+            height: 145px;
+            padding: 5px;
+            border-radius: 50%;
+            margin: 0 auto 22px;
+            background: linear-gradient(135deg, var(--purple), var(--pink));
+            box-shadow: 0 12px 30px rgba(118, 87, 246, .20);
+            transition: transform .35s;
+        }
+
+        .photo-frame:hover {
+            transform: scale(1.06) rotate(2deg);
+        }
+
+        .member-photo {
+            width: 100%;
+            height: 100%;
+            display: block;
+            object-fit: cover;
+            border-radius: 50%;
+            background: #f0ebff;
+            border: 3px solid white;
+            cursor: zoom-in;
+        }
+
+        .member-photo:focus-visible {
+            outline: 3px solid var(--purple);
+            outline-offset: 4px;
+        }
+
+        .member-card h3 {
+            font-family: 'Manrope', sans-serif;
+            font-size: 19px;
+            font-weight: 800;
+        }
+
+        .role {
+            color: var(--purple);
+            font-size: 12px;
+            font-weight: 800;
+            margin-top: 9px;
+        }
+
+        .member-description {
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.8;
+            margin-top: 14px;
+            min-height: 43px;
+        }
+
+        .profile-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 20px;
+            padding: 11px 16px;
+            border: 1px solid #e8e1ff;
+            border-radius: 12px;
+            color: var(--purple);
+            font-size: 12px;
+            font-weight: 800;
+            transition: .25s;
+        }
+
+        .profile-link:hover {
+            background: var(--purple);
+            border-color: var(--purple);
+            color: white;
+        }
+
+        /* Enlarged photo popup */
+
+        .photo-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background: rgba(20, 16, 40, .86);
+            backdrop-filter: blur(9px);
+            align-items: center;
+            justify-content: center;
+            padding: 25px;
+            opacity: 0;
+        }
+
+        .photo-modal.show {
+            display: flex;
+            animation: modalFadeIn .25s ease forwards;
+        }
+
+        .enlarged-photo {
+            display: block;
+            max-width: min(90vw, 650px);
+            max-height: 82vh;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+            border: 4px solid white;
+            border-radius: 18px;
+            box-shadow: 0 25px 80px rgba(0, 0, 0, .35);
+            animation: photoZoomIn .3s ease both;
+        }
+
+        .photo-close {
+            position: absolute;
+            top: 20px;
+            right: 28px;
+            width: 48px;
+            height: 48px;
+            border: 1px solid rgba(255, 255, 255, .3);
+            border-radius: 50%;
+            background: rgba(255, 255, 255, .12);
+            color: white;
+            font-size: 32px;
+            line-height: 1;
+            cursor: pointer;
+            display: grid;
+            place-items: center;
+            transition: background .2s, transform .2s;
+        }
+
+        .photo-close:hover {
+            background: rgba(255, 255, 255, .25);
+            transform: rotate(90deg);
+        }
+
+        .photo-close:focus-visible {
+            outline: 3px solid white;
+            outline-offset: 3px;
+        }
+
+        .photo-caption {
+            position: absolute;
+            bottom: 22px;
+            left: 15px;
+            right: 15px;
+            color: white;
+            text-align: center;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        /* Closing quote */
+
+        .team-quote {
+            margin: 0 7% 80px;
+            padding: 35px 25px;
+            text-align: center;
+            color: white;
+            border-radius: 24px;
+            background: linear-gradient(115deg, var(--purple), #a477f7, var(--pink));
+            box-shadow: 0 15px 35px rgba(118, 87, 246, .15);
+        }
+
+        .team-quote h2 {
+            font-family: 'Manrope', sans-serif;
+            font-size: clamp(22px, 3vw, 31px);
+        }
+
+        .team-quote p {
+            font-size: 13px;
+            line-height: 1.8;
+            margin-top: 12px;
+            color: rgba(255, 255, 255, .9);
+        }
+
+        /* Footer */
+
+        footer {
+            padding: 25px 7%;
+            background: white;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            flex-wrap: wrap;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        /* Animations */
+
+        @keyframes appear {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes rise {
+            from {
+                opacity: 0;
+                transform: translateY(25px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes modalFadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes photoZoomIn {
+            from {
+                transform: scale(.75);
+                opacity: .5;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 1050px) {
+            .team-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 600px) {
+            .navbar {
+                padding: 15px 5%;
+            }
+
+            .nav-links {
+                gap: 12px;
+            }
+
+            .hero {
+                padding: 65px 5% 40px;
+            }
+
+            .team {
+                padding: 30px 5% 65px;
+            }
+
+            .team-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .member-card {
+                max-width: 370px;
+                width: 100%;
+                margin: auto;
+            }
+
+            .team-quote {
+                margin: 0 5% 60px;
+            }
+
+            .photo-close {
+                top: 12px;
+                right: 12px;
+            }
+
+            .enlarged-photo {
+                max-width: 92vw;
+                max-height: 75vh;
+            }
+
+            footer {
+                justify-content: center;
+                text-align: center;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation: none !important;
+                transition: none !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <a class="logo" href="home.html">🚌 BusMate</a>
+
+        <div class="nav-links">
+            <a href="home.html">Home</a>
+            <a href="#team">Our Team</a>
+            <a class="back-button" href="home.html">← Back Home</a>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <header class="hero">
+        <span class="eyebrow">THE PEOPLE BEHIND BUSMATE</span>
+
+        <h1>
+            Four minds.<br>
+            <span class="gradient">One better journey.</span>
+        </h1>
+
+        <p>
+            BusMate is built through teamwork, creativity and a shared
+            goal of making campus transportation simpler for students.
+            Meet the people working behind the experience.
+        </p>
+    </header>
+
+    <!-- Team Members -->
+    <section class="team" id="team">
+
+        <div class="team-heading">
+            <h2>Meet Our Team</h2>
+            <p>The people bringing the BusMate experience to life.</p>
+        </div>
+
+        <div class="team-grid">
+
+            <!-- Member 1 -->
+            <article class="member-card">
+
+                <div class="photo-frame">
+                    <img class="member-photo"
+                         src="images/IM1.png"
+                         alt="Hari Vignesh L"
+                         tabindex="0"
+                         data-name="Hari Vignesh L">
+                </div>
+
+                <h3>Hari Vignesh L</h3>
+                <div class="role">FRONTEND DEVELOPER</div>
+
+                <p class="member-description">
+                    Building the user interface and creating a
+                    smooth, engaging experience for students.
+                </p>
+
+                <a class="profile-link"
+                   href="https://www.linkedin.com/in/lharivignesh1"
+                   target="_blank"
+                   rel="noopener noreferrer">
+                    in &nbsp; LinkedIn Profile ↗
+                </a>
+
+            </article>
+
+            <!-- Member 2 -->
+            <article class="member-card">
+
+                <div class="photo-frame">
+                    <img class="member-photo"
+                         src="images/IM2.jpg"
+                         alt="Harshini M"
+                         tabindex="0"
+                         data-name="Harshini M">
+                </div>
+
+                <h3>Harshini M</h3>
+                <div class="role">BACKEND DEVELOPER</div>
+
+                <p class="member-description">
+                    Developing the server-side logic and connecting
+                    website features with backend services.
+                </p>
+
+                <a class="profile-link"
+                   href="https://www.linkedin.com/in/harshini-m-54797a3a9/"
+                   target="_blank"
+                   rel="noopener noreferrer">
+                    in &nbsp; LinkedIn Profile ↗
+                </a>
+
+            </article>
+
+            <!-- Member 3 -->
+            <article class="member-card">
+
+                <div class="photo-frame">
+                    <img class="member-photo"
+                         src="images/IM3.jpg"
+                         alt="Harshita"
+                         tabindex="0"
+                         data-name="Harshita">
+                </div>
+
+                <h3>Harshita</h3>
+                <div class="role">DATABASE DEVELOPER</div>
+
+                <p class="member-description">
+                    Organising bus, route and booking data to
+                    support reliable database operations.
+                </p>
+
+                <a class="profile-link"
+                   href="#team"
+                   data-profile-pending="Harshita">
+                    in &nbsp; LinkedIn Profile ↗
+                </a>
+
+            </article>
+
+            <!-- Member 4 -->
+            <article class="member-card">
+
+                <div class="photo-frame">
+                    <img class="member-photo"
+                         src="images/IM4.jpg"
+                         alt="Jikshitha"
+                         tabindex="0"
+                         data-name="Jikshitha">
+                </div>
+
+                <h3>Jikshitha</h3>
+                <div class="role">UI/UX DESIGNER</div>
+
+                <p class="member-description">
+                    Supporting the visual design and making
+                    the experience simple and intuitive.
+                </p>
+
+                <a class="profile-link"
+                   href="#team"
+                   data-profile-pending="Jikshitha">
+                    in &nbsp; LinkedIn Profile ↗
+                </a>
+
+            </article>
+
+        </div>
+    </section>
+
+    <!-- Team Quote -->
+    <section class="team-quote">
+        <h2>“Great journeys are built by great teams.”</h2>
+        <p>BusMate — making every campus journey a little easier.</p>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <span><strong>BusMate</strong> 🚌</span>
+        <span>Designed with teamwork and purpose.</span>
+        <span>© <span id="year"></span> BusMate</span>
+    </footer>
+
+    <!-- Enlarged Photo Popup -->
+    <div class="photo-modal"
+         id="photoModal"
+         role="dialog"
+         aria-modal="true"
+         aria-label="Enlarged team member photo"
+         aria-hidden="true">
+
+        <button class="photo-close"
+                id="photoClose"
+                type="button"
+                aria-label="Close enlarged photo">
+            &times;
+        </button>
+
+        <img class="enlarged-photo"
+             id="enlargedPhoto"
+             src=""
+             alt="">
+
+        <p class="photo-caption" id="photoCaption"></p>
+    </div>
+
+    <script>
+        // Current year
+        document.getElementById("year").textContent =
+            new Date().getFullYear();
+
+        // Photo popup elements
+        const photoModal = document.getElementById("photoModal");
+        const enlargedPhoto = document.getElementById("enlargedPhoto");
+        const photoClose = document.getElementById("photoClose");
+        const photoCaption = document.getElementById("photoCaption");
+
+        let previousFocusedElement = null;
+
+        // Open enlarged photo
+        function openPhoto(photo) {
+            if (!photo.complete || photo.naturalWidth === 0) {
+                alert(
+                    "Photo not found: " + photo.getAttribute("src") +
+                    "\nPlease check the filename and images folder."
+                );
+                return;
+            }
+
+            previousFocusedElement = document.activeElement;
+
+            enlargedPhoto.src = photo.src;
+            enlargedPhoto.alt = photo.alt;
+            photoCaption.textContent = photo.dataset.name || photo.alt;
+
+            photoModal.classList.add("show");
+            photoModal.setAttribute("aria-hidden", "false");
+
+            document.body.style.overflow = "hidden";
+
+            photoClose.focus();
+        }
+
+        // Close enlarged photo
+        function closePhotoModal() {
+            photoModal.classList.remove("show");
+            photoModal.setAttribute("aria-hidden", "true");
+
+            enlargedPhoto.src = "";
+            enlargedPhoto.alt = "";
+            photoCaption.textContent = "";
+
+            document.body.style.overflow = "";
+
+            if (previousFocusedElement) {
+                previousFocusedElement.focus();
+            }
+        }
+
+        // Clicking any profile photo opens the popup
+        document.querySelectorAll(".member-photo").forEach(photo => {
+            photo.addEventListener("click", () => {
+                openPhoto(photo);
+            });
+
+            // Keyboard accessibility: Enter or Space
+            photo.addEventListener("keydown", event => {
+                if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault();
+                    openPhoto(photo);
+                }
+            });
+        });
+
+        // Close button
+        photoClose.addEventListener("click", closePhotoModal);
+
+        // Click outside the enlarged image to close
+        photoModal.addEventListener("click", event => {
+            if (event.target === photoModal) {
+                closePhotoModal();
+            }
+        });
+
+        // Escape key closes popup
+        document.addEventListener("keydown", event => {
+            if (
+                event.key === "Escape" &&
+                photoModal.classList.contains("show")
+            ) {
+                closePhotoModal();
+            }
+        });
+
+        // Temporary notice for team members whose LinkedIn URLs
+        // have not yet been provided
+        document.querySelectorAll("[data-profile-pending]").forEach(link => {
+            link.addEventListener("click", event => {
+                event.preventDefault();
+
+                alert(
+                    "Please add " +
+                    link.dataset.profilePending +
+                    "'s LinkedIn profile URL."
+                );
+            });
+        });
+    </script>
+
+</body>
+</html>

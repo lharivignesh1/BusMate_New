@@ -1,0 +1,1242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>BusMate | Your Campus Ride, Simplified</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap"
+          rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #7657f6;
+            --primary-dark: #6040e8;
+            --pink: #ff77b7;
+            --text: #24213b;
+            --muted: #77768c;
+            --background: #fbfaff;
+            --white: #ffffff;
+            --border: #eeebf8;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--background);
+            color: var(--text);
+            overflow-x: hidden;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        button {
+            font-family: inherit;
+        }
+
+        /* Navigation */
+
+        .navbar {
+            width: 100%;
+            min-height: 82px;
+            padding: 0 7%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(255, 255, 255, 0.88);
+            backdrop-filter: blur(18px);
+            border-bottom: 1px solid rgba(118, 87, 246, 0.08);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            font-family: 'Manrope', sans-serif;
+            font-size: 25px;
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+
+        .logo-icon {
+            width: 43px;
+            height: 43px;
+            display: grid;
+            place-items: center;
+            background: linear-gradient(135deg, #7657f6, #ff77b7);
+            color: white;
+            border-radius: 14px;
+            font-size: 24px;
+            box-shadow: 0 8px 20px rgba(118, 87, 246, 0.23);
+        }
+
+        .logo span {
+            color: var(--primary);
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 34px;
+        }
+
+        .nav-links a {
+            font-size: 14px;
+            font-weight: 600;
+            color: #646176;
+            transition: color 0.25s;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .nav-button {
+            background: var(--primary);
+            color: white !important;
+            padding: 13px 23px;
+            border-radius: 13px;
+            box-shadow: 0 7px 18px rgba(118, 87, 246, 0.20);
+            transition: 0.3s;
+        }
+
+        .nav-button:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        /* Hero */
+
+        .hero {
+            min-height: 690px;
+            padding: 80px 7% 90px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            align-items: center;
+            gap: 45px;
+            position: relative;
+            isolation: isolate;
+        }
+
+        .hero::before {
+            content: "";
+            position: absolute;
+            width: 530px;
+            height: 530px;
+            right: -130px;
+            top: 30px;
+            border-radius: 50%;
+            background: radial-gradient(
+                circle,
+                rgba(255, 119, 183, 0.15),
+                rgba(118, 87, 246, 0.06),
+                transparent 70%
+            );
+            z-index: -1;
+        }
+
+        .hero::after {
+            content: "";
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            left: -170px;
+            bottom: 0;
+            border-radius: 50%;
+            background: rgba(118, 87, 246, 0.06);
+            filter: blur(45px);
+            z-index: -1;
+        }
+
+        .hero-content {
+            animation: enterLeft 0.9s ease both;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+            padding: 10px 15px;
+            background: white;
+            border: 1px solid #eee8ff;
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--primary);
+            box-shadow: 0 6px 20px rgba(40, 30, 90, 0.04);
+            margin-bottom: 25px;
+        }
+
+        .badge-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #35c98b;
+            box-shadow: 0 0 0 4px rgba(53, 201, 139, 0.12);
+        }
+
+        .hero h1 {
+            font-family: 'Manrope', sans-serif;
+            font-size: clamp(42px, 5vw, 67px);
+            line-height: 1.12;
+            letter-spacing: -3px;
+            font-weight: 800;
+            max-width: 650px;
+        }
+
+        .gradient-text {
+            background: linear-gradient(100deg, #7657f6 10%, #ff65ad 95%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .hero-description {
+            max-width: 510px;
+            margin-top: 25px;
+            color: var(--muted);
+            font-size: 16px;
+            line-height: 1.9;
+        }
+
+        .hero-actions {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 33px;
+        }
+
+        .primary-button,
+        .secondary-button {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            padding: 16px 25px;
+            border-radius: 14px;
+            font-weight: 700;
+            font-size: 14px;
+            transition: 0.3s ease;
+            cursor: pointer;
+        }
+
+        .primary-button {
+            border: 0;
+            color: white;
+            background: linear-gradient(120deg, #7657f6, #9976ff);
+            box-shadow: 0 12px 28px rgba(118, 87, 246, 0.25);
+        }
+
+        .primary-button:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 17px 32px rgba(118, 87, 246, 0.32);
+        }
+
+        .secondary-button {
+            border: 1px solid var(--border);
+            color: var(--text);
+            background: white;
+        }
+
+        .secondary-button:hover {
+            border-color: var(--primary);
+            transform: translateY(-3px);
+        }
+
+        .hero-note {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 30px;
+            color: #88869b;
+            font-size: 12px;
+        }
+
+        .check-icon {
+            color: #35b987;
+            font-size: 17px;
+        }
+
+        /* Animated bus illustration */
+
+        .hero-visual {
+            min-height: 460px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            animation: enterRight 1s ease both;
+        }
+
+        .visual-orb {
+            width: min(430px, 100%);
+            aspect-ratio: 1;
+            position: absolute;
+            border-radius: 50%;
+            background: linear-gradient(
+                145deg,
+                rgba(118, 87, 246, 0.12),
+                rgba(255, 119, 183, 0.16)
+            );
+            border: 1px solid rgba(118, 87, 246, 0.10);
+            animation: orbFloat 6s ease-in-out infinite;
+        }
+
+        .orbit {
+            position: absolute;
+            width: 470px;
+            height: 200px;
+            border: 1px dashed rgba(118, 87, 246, 0.25);
+            border-radius: 50%;
+            transform: rotate(-27deg);
+        }
+
+        .bus-scene {
+            width: 100%;
+            max-width: 500px;
+            position: relative;
+            z-index: 2;
+            animation: busFloat 4s ease-in-out infinite;
+        }
+
+        .bus-illustration {
+            width: 100%;
+            filter: drop-shadow(0 25px 22px rgba(65, 48, 125, 0.16));
+            overflow: visible;
+        }
+
+        .floating-card {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.96);
+            border: 1px solid rgba(118, 87, 246, 0.10);
+            box-shadow: 0 15px 40px rgba(44, 34, 100, 0.10);
+            border-radius: 18px;
+            padding: 15px 18px;
+            z-index: 5;
+            animation: cardFloat 4s ease-in-out infinite;
+        }
+
+        .route-card {
+            top: 43px;
+            left: -5px;
+        }
+
+        .seat-card {
+            bottom: 42px;
+            right: -5px;
+            animation-delay: -2s;
+        }
+
+        .card-label {
+            font-size: 11px;
+            color: var(--muted);
+            margin-bottom: 7px;
+        }
+
+        .card-value {
+            font-size: 15px;
+            font-weight: 800;
+        }
+
+        .card-icon {
+            display: inline-grid;
+            place-items: center;
+            width: 32px;
+            height: 32px;
+            border-radius: 10px;
+            margin-right: 7px;
+            background: #f0ebff;
+        }
+
+        .seat-number {
+            color: #28ad7a;
+        }
+
+        .decor-dot {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #ff80b8;
+            top: 90px;
+            right: 40px;
+            box-shadow: 0 0 0 9px rgba(255, 128, 184, 0.12);
+        }
+
+        /* Quote strip */
+
+        .quote-strip {
+            margin: 0 7%;
+            padding: 24px 30px;
+            border-radius: 20px;
+            background: linear-gradient(110deg, #7657f6, #9477ff 60%, #c17af9);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            text-align: center;
+            box-shadow: 0 15px 35px rgba(118, 87, 246, 0.16);
+        }
+
+        .quote-mark {
+            font-family: Georgia, serif;
+            font-size: 42px;
+            line-height: 0.6;
+            opacity: 0.7;
+        }
+
+        .quote-strip p {
+            font-size: 16px;
+            line-height: 1.7;
+            font-weight: 600;
+        }
+
+        /* Features */
+
+        .features {
+            padding: 105px 7%;
+        }
+
+        .section-heading {
+            text-align: center;
+            max-width: 650px;
+            margin: 0 auto 55px;
+        }
+
+        .section-label {
+            color: var(--primary);
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .section-heading h2 {
+            font-family: 'Manrope', sans-serif;
+            font-size: clamp(30px, 4vw, 43px);
+            letter-spacing: -1.5px;
+            margin-top: 14px;
+        }
+
+        .section-heading p {
+            margin-top: 15px;
+            color: var(--muted);
+            line-height: 1.8;
+            font-size: 14px;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 23px;
+        }
+
+        .feature-card {
+            padding: 32px;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 23px;
+            transition: transform 0.35s, box-shadow 0.35s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::after {
+            content: "";
+            position: absolute;
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            right: -55px;
+            bottom: -55px;
+            background: rgba(118, 87, 246, 0.06);
+            transition: transform 0.35s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-9px);
+            box-shadow: 0 22px 45px rgba(44, 34, 100, 0.08);
+        }
+
+        .feature-card:hover::after {
+            transform: scale(2);
+        }
+
+        .feature-icon {
+            display: grid;
+            place-items: center;
+            width: 58px;
+            height: 58px;
+            border-radius: 18px;
+            font-size: 26px;
+            margin-bottom: 24px;
+        }
+
+        .icon-purple {
+            background: #f0ebff;
+        }
+
+        .icon-pink {
+            background: #fff0f7;
+        }
+
+        .icon-green {
+            background: #e8fbf3;
+        }
+
+        .feature-card h3 {
+            font-family: 'Manrope', sans-serif;
+            font-size: 19px;
+            margin-bottom: 13px;
+        }
+
+        .feature-card p {
+            color: var(--muted);
+            font-size: 14px;
+            line-height: 1.85;
+        }
+
+        /* CTA */
+
+        .cta {
+            margin: 0 7% 90px;
+            padding: 65px 35px;
+            border-radius: 30px;
+            text-align: center;
+            background:
+                radial-gradient(circle at 10% 10%, rgba(255,255,255,.22), transparent 25%),
+                linear-gradient(120deg, #7657f6, #a16ff8 65%, #ff80b8);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta::before,
+        .cta::after {
+            content: "";
+            position: absolute;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            border-radius: 50%;
+        }
+
+        .cta::before {
+            width: 260px;
+            height: 260px;
+            top: -150px;
+            right: -30px;
+        }
+
+        .cta::after {
+            width: 190px;
+            height: 190px;
+            bottom: -125px;
+            left: 5%;
+        }
+
+        .cta h2 {
+            font-family: 'Manrope', sans-serif;
+            font-size: clamp(28px, 4vw, 42px);
+            letter-spacing: -1px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .cta p {
+            margin: 16px auto 27px;
+            max-width: 550px;
+            line-height: 1.8;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.85);
+            position: relative;
+            z-index: 1;
+        }
+
+        .cta .primary-button {
+            background: white;
+            color: var(--primary);
+            position: relative;
+            z-index: 1;
+            box-shadow: 0 10px 25px rgba(55, 35, 100, 0.12);
+        }
+
+        /* Footer */
+
+        footer {
+            padding: 30px 7%;
+            background: white;
+            border-top: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        footer p {
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        .footer-brand {
+            font-weight: 800;
+            color: var(--primary);
+            font-family: 'Manrope', sans-serif;
+        }
+
+        /* Reveal animations */
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(25px);
+            transition: opacity 0.7s ease, transform 0.7s ease;
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        @keyframes enterLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes enterRight {
+            from {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes busFloat {
+            0%, 100% {
+                transform: translateY(0) rotate(-1deg);
+            }
+            50% {
+                transform: translateY(-13px) rotate(1deg);
+            }
+        }
+
+        @keyframes orbFloat {
+            0%, 100% {
+                transform: translateY(0) scale(1);
+            }
+            50% {
+                transform: translateY(-10px) scale(1.03);
+            }
+        }
+
+        @keyframes cardFloat {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-9px);
+            }
+        }
+
+        /* Responsive */
+
+        @media (max-width: 950px) {
+            .hero {
+                grid-template-columns: 1fr;
+                padding-top: 65px;
+                text-align: center;
+            }
+
+            .hero-content {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .hero-description {
+                max-width: 650px;
+            }
+
+            .hero-visual {
+                min-height: 400px;
+            }
+
+            .feature-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .nav-links {
+                gap: 20px;
+            }
+        }
+
+        @media (max-width: 620px) {
+            .navbar {
+                min-height: 72px;
+                padding: 0 5%;
+            }
+
+            .logo {
+                font-size: 21px;
+            }
+
+            .logo-icon {
+                width: 37px;
+                height: 37px;
+            }
+
+            .nav-links {
+                gap: 12px;
+            }
+
+            .nav-links a:not(.nav-button) {
+                display: none;
+            }
+
+            .nav-button {
+                padding: 11px 15px;
+                font-size: 12px !important;
+            }
+
+            .hero {
+                padding: 60px 5% 50px;
+                gap: 15px;
+            }
+
+            .hero h1 {
+                font-size: 43px;
+                letter-spacing: -2px;
+            }
+
+            .hero-description {
+                font-size: 14px;
+            }
+
+            .hero-visual {
+                min-height: 320px;
+            }
+
+            .visual-orb {
+                width: 280px;
+            }
+
+            .orbit {
+                width: 300px;
+                height: 140px;
+            }
+
+            .floating-card {
+                padding: 11px;
+            }
+
+            .route-card {
+                left: -4px;
+                top: 20px;
+            }
+
+            .seat-card {
+                right: -4px;
+                bottom: 20px;
+            }
+
+            .card-value {
+                font-size: 12px;
+            }
+
+            .card-label {
+                font-size: 10px;
+            }
+
+            .quote-strip {
+                margin: 0 5%;
+                padding: 20px 15px;
+            }
+
+            .quote-strip p {
+                font-size: 13px;
+            }
+
+            .features {
+                padding: 75px 5%;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .feature-card {
+                padding: 27px;
+            }
+
+            .cta {
+                margin: 0 5% 65px;
+                padding: 48px 20px;
+            }
+
+            footer {
+                padding: 25px 5%;
+                justify-content: center;
+                text-align: center;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                scroll-behavior: auto !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <a href="home.html" class="logo">
+            <div class="logo-icon">🚌</div>
+            Bus<span>Mate</span>
+        </a>
+
+        <div class="nav-links">
+            <a href="#home">Home</a>
+            <a href="#features">Features</a>
+            <a href="about.html">About</a>
+            <a href="login.html" class="nav-button">Get Started ↗</a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <main>
+        <section class="hero" id="home">
+
+            <div class="hero-content">
+
+                <div class="badge">
+                    <span class="badge-dot"></span>
+                    YOUR CAMPUS TRANSPORT, REIMAGINED
+                </div>
+
+                <h1>
+                    Your daily ride,<br>
+                    <span class="gradient-text">made effortless.</span>
+                </h1>
+
+                <p class="hero-description">
+                    No more guessing. No more confusion.
+                    Discover your bus, explore pickup areas,
+                    check available seats and make your campus
+                    journey simpler with BusMate.
+                </p>
+
+                <div class="hero-actions">
+                    <a href="login.html" class="primary-button">
+                        Get Started <span>↗</span>
+                    </a>
+
+                    <a href="#features" class="secondary-button">
+                        Explore Features ↓
+                    </a>
+                </div>
+
+                <div class="hero-note">
+                    <span class="check-icon">✓</span>
+                    Simple booking. Clear routes. Better journeys.
+                </div>
+
+            </div>
+
+            <!-- Animated illustration -->
+            <div class="hero-visual">
+
+                <div class="visual-orb"></div>
+                <div class="orbit"></div>
+                <div class="decor-dot"></div>
+
+                <div class="floating-card route-card">
+                    <div class="card-label">YOUR ROUTE</div>
+                    <div class="card-value">
+                        <span class="card-icon">📍</span>
+                        Your Area → Campus
+                    </div>
+                </div>
+
+                <div class="bus-scene">
+
+                    <svg class="bus-illustration"
+                         viewBox="0 0 540 350"
+                         xmlns="http://www.w3.org/2000/svg"
+                         role="img"
+                         aria-label="Illustration of a campus bus">
+
+                        <defs>
+                            <linearGradient id="busBody"
+                                            x1="0" y1="0"
+                                            x2="1" y2="1">
+                                <stop offset="0%" stop-color="#a18aff"/>
+                                <stop offset="100%" stop-color="#7050ed"/>
+                            </linearGradient>
+
+                            <linearGradient id="windowGlass"
+                                            x1="0" y1="0"
+                                            x2="0" y2="1">
+                                <stop offset="0%" stop-color="#f6f3ff"/>
+                                <stop offset="100%" stop-color="#dcd3ff"/>
+                            </linearGradient>
+                        </defs>
+
+                        <!-- Ground shadow -->
+                        <ellipse cx="278" cy="292"
+                                 rx="210" ry="24"
+                                 fill="#8d7bd4"
+                                 opacity="0.14"/>
+
+                        <!-- Bus body -->
+                        <path d="M95 94
+                                 Q95 70 123 70
+                                 H385
+                                 Q422 70 438 105
+                                 L470 180
+                                 Q481 193 481 213
+                                 V254
+                                 Q481 270 463 270
+                                 H93
+                                 Q76 270 76 253
+                                 V111
+                                 Q76 94 95 94Z"
+                              fill="url(#busBody)"/>
+
+                        <!-- Front windshield -->
+                        <path d="M389 88
+                                 Q414 88 427 113
+                                 L451 174
+                                 H386
+                                 Z"
+                              fill="url(#windowGlass)"/>
+
+                        <!-- Side windows -->
+                        <rect x="119" y="91"
+                              width="75" height="74"
+                              rx="10"
+                              fill="url(#windowGlass)"/>
+
+                        <rect x="204" y="91"
+                              width="75" height="74"
+                              rx="10"
+                              fill="url(#windowGlass)"/>
+
+                        <rect x="289" y="91"
+                              width="75" height="74"
+                              rx="10"
+                              fill="url(#windowGlass)"/>
+
+                        <!-- Window reflections -->
+                        <path d="M132 101 L151 101 L139 151 L120 151Z"
+                              fill="#ffffff" opacity="0.50"/>
+
+                        <path d="M217 101 L236 101 L224 151 L205 151Z"
+                              fill="#ffffff" opacity="0.50"/>
+
+                        <path d="M302 101 L321 101 L309 151 L290 151Z"
+                              fill="#ffffff" opacity="0.50"/>
+
+                        <!-- Door -->
+                        <rect x="313" y="179"
+                              width="59" height="76"
+                              rx="8"
+                              fill="#ffffff"
+                              opacity="0.22"/>
+
+                        <rect x="320" y="185"
+                              width="22" height="64"
+                              rx="5"
+                              fill="#e8e0ff"/>
+
+                        <rect x="347" y="185"
+                              width="18" height="64"
+                              rx="5"
+                              fill="#e8e0ff"/>
+
+                        <!-- BusMate branding -->
+                        <rect x="120" y="184"
+                              width="164" height="48"
+                              rx="13"
+                              fill="#ffffff"/>
+
+                        <text x="202" y="204"
+                              text-anchor="middle"
+                              font-family="Arial, sans-serif"
+                              font-size="12"
+                              font-weight="700"
+                              fill="#7657f6">CAMPUS RIDE</text>
+
+                        <text x="202" y="220"
+                              text-anchor="middle"
+                              font-family="Arial, sans-serif"
+                              font-size="9"
+                              font-weight="600"
+                              fill="#77768c">YOUR BUSMATE</text>
+
+                        <!-- Headlight -->
+                        <rect x="445" y="190"
+                              width="26" height="26"
+                              rx="8"
+                              fill="#fff1bf"/>
+
+                        <rect x="450" y="196"
+                              width="7" height="14"
+                              rx="3"
+                              fill="#ffffff"/>
+
+                        <!-- Front bumper -->
+                        <path d="M395 258 H465
+                                 Q480 258 480 246
+                                 V235 H395Z"
+                              fill="#4f35c7"/>
+
+                        <!-- Wheels -->
+                        <circle cx="151" cy="264" r="38"
+                                fill="#312b48"/>
+
+                        <circle cx="151" cy="264" r="23"
+                                fill="#ffffff"/>
+
+                        <circle cx="151" cy="264" r="12"
+                                fill="#cfc4ff"/>
+
+                        <circle cx="407" cy="264" r="38"
+                                fill="#312b48"/>
+
+                        <circle cx="407" cy="264" r="23"
+                                fill="#ffffff"/>
+
+                        <circle cx="407" cy="264" r="12"
+                                fill="#cfc4ff"/>
+
+                        <!-- Small details -->
+                        <rect x="100" y="111"
+                              width="5" height="38"
+                              rx="2"
+                              fill="#c6b9ff"/>
+
+                        <path d="M88 245 H105"
+                              stroke="#c6b9ff"
+                              stroke-width="5"
+                              stroke-linecap="round"/>
+
+                        <!-- Decorative stars -->
+                        <path d="M98 44 L103 57 L116 62 L103 67 L98 80 L93 67 L80 62 L93 57Z"
+                              fill="#ff80b8"/>
+
+                        <path d="M446 55 L450 64 L459 68 L450 72 L446 81 L442 72 L433 68 L442 64Z"
+                              fill="#a18aff"/>
+
+                        <circle cx="480" cy="110" r="5"
+                                fill="#ff80b8"/>
+
+                        <circle cx="70" cy="187" r="6"
+                                fill="#ff80b8" opacity="0.7"/>
+
+                    </svg>
+
+                </div>
+
+                <div class="floating-card seat-card">
+                    <div class="card-label">SEAT AVAILABILITY</div>
+                    <div class="card-value">
+                        <span class="card-icon">💺</span>
+                        <span class="seat-number">Check before you ride</span>
+                    </div>
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- Quote -->
+        <section class="quote-strip" id="about">
+            <span class="quote-mark">“</span>
+            <p>
+                Every great day starts with a better journey.
+                Let BusMate take you there.
+            </p>
+            <span class="quote-mark">”</span>
+        </section>
+
+        <!-- Features -->
+        <section class="features" id="features">
+
+            <div class="section-heading reveal">
+                <span class="section-label">MADE FOR YOUR JOURNEY</span>
+
+                <h2>
+                    Your campus commute,<br>
+                    <span class="gradient-text">without the chaos.</span>
+                </h2>
+
+                <p>
+                    Everything you need to make your everyday
+                    college travel more organised and convenient.
+                </p>
+            </div>
+
+            <div class="feature-grid">
+
+                <article class="feature-card reveal">
+                    <div class="feature-icon icon-purple">🚌</div>
+
+                    <h3>Find Your Bus</h3>
+
+                    <p>
+                        Explore available college buses and find
+                        the bus numbers assigned to your pickup area.
+                    </p>
+                </article>
+
+                <article class="feature-card reveal">
+                    <div class="feature-icon icon-pink">💺</div>
+
+                    <h3>Know Your Seats</h3>
+
+                    <p>
+                        Check the total seats, booked seats and
+                        available seats before making your booking.
+                    </p>
+                </article>
+
+                <article class="feature-card reveal">
+                    <div class="feature-icon icon-green">📍</div>
+
+                    <h3>Explore Routes</h3>
+
+                    <p>
+                        Discover the areas covered by each bus
+                        and view its scheduled pickup times.
+                    </p>
+                </article>
+
+                <article class="feature-card reveal">
+                    <div class="feature-icon icon-pink">🎫</div>
+
+                    <h3>Easy Booking</h3>
+
+                    <p>
+                        Choose a suitable bus and reserve an
+                        available seat through the student dashboard.
+                    </p>
+                </article>
+
+                <article class="feature-card reveal">
+                    <div class="feature-icon icon-purple">📨</div>
+
+                    <h3>Request Extra Buses</h3>
+
+                    <p>
+                        Students can submit additional bus requests
+                        when transport availability is insufficient.
+                    </p>
+                </article>
+
+                <article class="feature-card reveal">
+                    <div class="feature-icon icon-green">⚙️</div>
+
+                    <h3>Smart Administration</h3>
+
+                    <p>
+                        Administrators can manage buses, assign
+                        pickup areas and review student requests.
+                    </p>
+                </article>
+
+            </div>
+
+        </section>
+
+        <!-- CTA -->
+        <section class="cta reveal">
+
+            <h2>Your next journey starts here.</h2>
+
+            <p>
+                Find your route, check your seats and make
+                your daily college commute a little easier.
+            </p>
+
+            <a href="login.html" class="primary-button">
+                Get Started with BusMate ↗
+            </a>
+
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <a href="home.html" class="footer-brand">BusMate 🚌</a>
+
+        <p>
+            Making campus journeys simpler, one seat at a time.
+        </p>
+
+        <p>© <span id="year"></span> BusMate</p>
+    </footer>
+
+    <script>
+        // Current year
+        document.getElementById("year").textContent =
+            new Date().getFullYear();
+
+        // Reveal cards while scrolling
+        const observer = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add("visible");
+                        observer.unobserve(entry.target);
+                    }
+                });
+            },
+            {
+                threshold: 0.12
+            }
+        );
+
+        document.querySelectorAll(".reveal").forEach((element) => {
+            observer.observe(element);
+        });
+    </script>
+
+</body>
+</html>

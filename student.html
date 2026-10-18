@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BusMate | Student Dashboard</title>
+
+<style>
+:root {
+    --purple:#6d28d9;
+    --pink:#ec4899;
+    --dark:#281a46;
+    --muted:#827991;
+    --bg:#f7f5ff;
+    --border:#ece8f5;
+    --green:#16a34a;
+}
+*{box-sizing:border-box;margin:0;padding:0;font-family:"Segoe UI",Arial,sans-serif}
+body{background:var(--bg);color:var(--dark)}
+button,input,select{font:inherit}
+button{cursor:pointer}
+header{
+    padding:22px 5%;
+    background:white;
+    border-bottom:1px solid var(--border);
+    display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap
+}
+.brand{font-size:27px;font-weight:850;color:var(--purple)}
+.brand span{color:var(--pink)}
+.profile{background:#f4edff;padding:11px 15px;border-radius:12px;font-size:14px}
+.container{max-width:1250px;margin:auto;padding:30px 22px}
+.welcome{
+    padding:30px;border-radius:24px;color:white;
+    background:linear-gradient(115deg,#4c1d95,#7c3aed 65%,#db2777);
+    position:relative;overflow:hidden;margin-bottom:25px
+}
+.welcome:after{
+    content:"🚌";position:absolute;right:7%;top:8px;font-size:95px;
+    opacity:.2;transform:rotate(-8deg);animation:float 4s ease-in-out infinite
+}
+@keyframes float{50%{transform:translateY(-10px) rotate(3deg)}}
+.welcome h1{font-size:clamp(25px,4vw,36px);margin-bottom:10px}
+.welcome p{color:#f3e8ff;max-width:650px;line-height:1.6}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:17px;margin-bottom:25px}
+.card{background:white;border:1px solid var(--border);border-radius:19px;padding:22px;box-shadow:0 8px 25px #35205e08}
+.stat-label{font-size:14px;color:var(--muted)}
+.stat-value{font-size:29px;font-weight:800;color:var(--purple);margin-top:10px}
+.toolbar{display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap;margin-bottom:20px}
+.toolbar h2{font-size:21px}
+.controls{display:flex;gap:10px;flex-wrap:wrap}
+select,input{padding:12px 13px;border:1px solid var(--border);border-radius:10px;background:white;outline:none;min-width:180px}
+select:focus,input:focus{border-color:var(--purple);box-shadow:0 0 0 3px #6d28d91c}
+.btn{border:0;padding:12px 16px;border-radius:10px;font-weight:700;transition:.2s}
+.primary{color:white;background:linear-gradient(110deg,var(--purple),var(--pink))}
+.primary:hover{transform:translateY(-2px);box-shadow:0 6px 15px #6d28d933}
+.secondary{background:#f1ebff;color:var(--purple)}
+.danger{background:#fee2e2;color:#991b1b}
+.bus-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.bus-card{background:white;border:1px solid var(--border);border-radius:19px;padding:22px;transition:.2s}
+.bus-card:hover{transform:translateY(-4px);box-shadow:0 12px 25px #35205e10}
+.bus-top{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:18px}
+.bus-icon{width:45px;height:45px;display:grid;place-items:center;background:#f1eaff;border-radius:13px;font-size:24px}
+.bus-number{font-size:19px;font-weight:800}
+.bus-name{color:var(--muted);font-size:13px;margin-top:4px}
+.badge{padding:6px 9px;border-radius:20px;font-size:12px;font-weight:750;background:#dcfce7;color:#166534}
+.badge.full{background:#fee2e2;color:#991b1b}
+.route{font-size:13px;color:#6e6483;line-height:1.7;margin:12px 0}
+.seat-line{display:flex;justify-content:space-between;font-size:13px;margin:15px 0 9px}
+.progress{height:8px;border-radius:20px;background:#eee9f8;overflow:hidden}
+.progress div{height:100%;background:linear-gradient(90deg,var(--purple),var(--pink));border-radius:20px}
+.bus-card .btn{width:100%;margin-top:16px}
+.notice{display:none;margin-bottom:18px;padding:13px 15px;border-radius:11px}
+.notice.success{display:block;background:#dcfce7;color:#166534}
+.notice.error{display:block;background:#fee2e2;color:#991b1b}
+.empty{text-align:center;padding:30px;color:var(--muted)}
+.table-wrap{overflow:auto;border:1px solid var(--border);border-radius:14px}
+table{border-collapse:collapse;width:100%;min-width:600px}
+th,td{text-align:left;padding:14px;border-bottom:1px solid #f0edf6;font-size:14px}
+th{background:#faf9ff;color:#706782}
+.modal{display:none;position:fixed;inset:0;z-index:5;background:#211a3580;align-items:center;justify-content:center;padding:20px}
+.modal.open{display:flex}
+.modal-content{background:white;width:min(440px,100%);padding:25px;border-radius:20px;animation:show .2s ease}
+@keyframes show{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.modal-content h2{margin-bottom:15px}
+.modal-content p{color:var(--muted);line-height:1.6;margin-bottom:18px}
+.modal-actions{display:flex;justify-content:flex-end;gap:10px}
+@media(max-width:950px){.bus-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){.container{padding:20px 12px}.stats{gap:9px}.card{padding:15px}.stat-value{font-size:23px}.bus-grid{grid-template-columns:1fr}.welcome{padding:23px}.welcome:after{font-size:65px;right:4%}}
+</style>
+</head>
+
+<body>
+<header>
+    <div class="brand">Bus<span>Mate.</span></div>
+    <div class="profile">🎓 <span id="studentName">Student</span> · <span id="rollNumber">Loading...</span></div>
+    <button class="btn secondary" id="logoutButton">Logout ↗</button>
+</header>
+
+<main class="container">
+    <section class="welcome">
+        <h1 id="welcomeTitle">Your campus commute, simplified.</h1>
+        <p>Choose your pickup area, explore available buses, and book your seat in a few clicks.</p>
+    </section>
+
+    <div id="notice" class="notice"></div>
+
+    <section class="stats">
+        <div class="card"><div class="stat-label">Available buses</div><div class="stat-value" id="availableBuses">—</div></div>
+        <div class="card"><div class="stat-label">Your bookings</div><div class="stat-value" id="myBookings">—</div></div>
+        <div class="card"><div class="stat-label">Available seats</div><div class="stat-value" id="availableSeats">—</div></div>
+    </section>
+
+    <section class="card" style="margin-bottom:24px">
+        <div class="toolbar">
+            <div><h2>Find your bus</h2><p style="color:var(--muted);margin-top:6px">Select your pickup area to find suitable buses.</p></div>
+            <div class="controls">
+                <select id="areaSelect"><option value="">Choose pickup area</option></select>
+                <button class="btn primary" id="findBuses">Find buses →</button>
+            </div>
+        </div>
+    </section>
+
+    <section style="margin-bottom:26px">
+        <div class="toolbar"><h2 id="busHeading">Buses for your route</h2></div>
+        <div id="busGrid" class="bus-grid"><div class="empty">Loading bus information...</div></div>
+    </section>
+
+    <section class="card">
+        <div class="toolbar">
+            <div><h2>My bookings</h2><p style="color:var(--muted);margin-top:6px">View and manage your current seat reservations.</p></div>
+            <button class="btn secondary" id="refreshBookings">↻ Refresh</button>
+        </div>
+        <div id="bookingsTable"><div class="empty">Loading bookings...</div></div>
+    </section>
+</main>
+
+<div class="modal" id="requestModal">
+    <div class="modal-content">
+        <h2>Request an extra bus 🚌</h2>
+        <p>All buses serving this area are full. You can submit a request for the administration team to review.</p>
+        <div class="form-group">
+            <label for="requestNote">Additional details (optional)</label>
+            <input id="requestNote" maxlength="500" placeholder="Preferred pickup time or other details">
+        </div>
+        <div class="modal-actions">
+            <button class="btn secondary" onclick="closeRequest()">Cancel</button>
+            <button class="btn primary" onclick="submitRequest()">Submit request</button>
+        </div>
+    </div>
+</div>
+
+<script>
+const API = "/api";
+const state = { profile:null, areas:[], buses:[], bookings:[], selectedAreaId:null };
+
+async function api(path, options={}) {
+    const response = await fetch(API + path, {
+        credentials:"same-origin",
+        ...options,
+        headers:{"Content-Type":"application/json",...(options.headers||{})}
+    });
+
+    const text = await response.text();
+    let data = {};
+    if (text) {
+        try { data=JSON.parse(text); }
+        catch { data={message:text}; }
+    }
+
+    if (response.status===401 || response.status===403) {
+        throw new Error("Please sign in again to continue.");
+    }
+    if (!response.ok) throw new Error(data.message || "Request failed.");
+    return data;
+}
+
+function escapeHtml(v) {
+    return String(v??"").replace(/[&<>"']/g,c=>({
+        "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+    })[c]);
+}
+
+function notice(message,type="success") {
+    const n=document.getElementById("notice");
+    n.textContent=message;
+    n.className="notice "+type;
+    setTimeout(()=>n.className="notice",4500);
+}
+
+async function loadProfile() {
+    const d=await api("/student/profile");
+    state.profile=d.student || d;
+    document.getElementById("studentName").textContent=state.profile.fullName || state.profile.name || "Student";
+    document.getElementById("rollNumber").textContent=state.profile.rollNumber || "";
+    document.getElementById("welcomeTitle").textContent=
+        `Hello, ${(state.profile.fullName || state.profile.name || "Student").split(" ")[0]}! 👋`;
+}
+
+async function loadAreas() {
+    const d=await api("/areas");
+    state.areas=d.items || d.areas || d;
+    const select=document.getElementById("areaSelect");
+    select.innerHTML='<option value="">Choose pickup area</option>';
+    state.areas.forEach(a=>{
+        const option=document.createElement("option");
+        option.value=a.areaId ?? a.id;
+        option.textContent=a.areaName || a.name;
+        select.appendChild(option);
+    });
+}
+
+async function loadBuses(areaId) {
+    state.selectedAreaId=areaId;
+    const grid=document.getElementById("busGrid");
+    grid.innerHTML='<div class="empty">Loading buses...</div>';
+
+    const d=await api("/student/buses?areaId="+encodeURIComponent(areaId));
+    state.buses=d.items || d.buses || d;
+    renderBuses();
+}
+
+function renderBuses() {
+    const grid=document.getElementById("busGrid");
+    document.getElementById("busHeading").textContent=
+        "Buses serving "+(state.areas.find(a=>String(a.areaId??a.id)===String(state.selectedAreaId))?.areaName || "selected area");
+
+    if(!state.buses.length) {
+        grid.innerHTML='<div class="empty">No buses serve this area.</div>';
+        return;
+    }
+
+    grid.innerHTML=state.buses.map(b=>{
+        const total=Number(b.capacity??b.totalSeats??40);
+        const booked=Number(b.bookedSeats??b.booked??0);
+        const available=Number(b.availableSeats??Math.max(0,total-booked));
+        const full=available<=0;
+        const occupancy=total>0?Math.min(100,Math.round(booked/total*100)):0;
+        return `<article class="bus-card">
+            <div class="bus-top">
+                <div style="display:flex;gap:12px;align-items:center">
+                    <div class="bus-icon">🚌</div>
+                    <div><div class="bus-number">${escapeHtml(b.busNumber)}</div>
+                    <div class="bus-name">${escapeHtml(b.busName||"Campus bus")}</div></div>
+                </div>
+                <span class="badge ${full?"full":""}">${full?"FULL":available+" seats"}</span>
+            </div>
+            <div class="route">📍 ${escapeHtml(b.routeNames || b.areas || b.areaName || "Route details available from backend")}<br>
+                ⏰ Pickup: ${escapeHtml(b.pickupTime||"See route details")}</div>
+            <div class="seat-line"><span>Seat occupancy</span><strong>${booked}/${total}</strong></div>
+            <div class="progress"><div style="width:${occupancy}%"></div></div>
+            <button class="btn ${full?"secondary":"primary"}" ${full?"disabled":""}
+                onclick="bookBus(${Number(b.busId??b.id)})">
+                ${full?"No seats available":"Book a seat"}
+            </button>
+        </article>`;
+    }).join("");
+
+    document.getElementById("availableBuses").textContent=state.buses.length;
+    document.getElementById("availableSeats").textContent=
+        state.buses.reduce((sum,b)=>sum+Number(b.availableSeats??Math.max(0,Number(b.capacity??40)-Number(b.bookedSeats??0))),0);
+}
+
+async function findBuses() {
+    const areaId=document.getElementById("areaSelect").value;
+    if(!areaId) return notice("Please select a pickup area.","error");
+
+    try {
+        await loadBuses(areaId);
+        const anySeats=state.buses.some(b=>Number(b.availableSeats??Math.max(0,Number(b.capacity??40)-Number(b.bookedSeats??0)))>0);
+        const requestBtn=document.getElementById("extraBusButton");
+        if(requestBtn) requestBtn.remove();
+
+        if(state.buses.length && !anySeats) {
+            const btn=document.createElement("button");
+            btn.id="extraBusButton";
+            btn.className="btn primary";
+            btn.style.marginTop="16px";
+            btn.textContent="Request an extra bus";
+            btn.onclick=openRequest;
+            document.getElementById("busGrid").after(btn);
+        }
+    } catch(e) { notice(e.message,"error"); }
+}
+
+async function bookBus(busId) {
+    if(!confirm("Confirm your seat booking?")) return;
+    try {
+        await api("/student/bookings",{method:"POST",body:JSON.stringify({busId})});
+        notice("Seat booked successfully!");
+        await Promise.all([loadMyBookings(),loadBuses(state.selectedAreaId)]);
+    } catch(e) { notice(e.message,"error"); }
+}
+
+async function loadMyBookings() {
+    const d=await api("/student/bookings");
+    state.bookings=d.items || d.bookings || d;
+    document.getElementById("myBookings").textContent=
+        state.bookings.filter(b=>(b.bookingStatus||b.status)==="BOOKED").length;
+    renderBookings();
+}
+
+function renderBookings() {
+    const target=document.getElementById("bookingsTable");
+    if(!state.bookings.length) {
+        target.innerHTML='<div class="empty">You have no bookings yet.</div>';
+        return;
+    }
+
+    target.innerHTML=`<div class="table-wrap"><table><thead><tr>
+        <th>Bus</th><th>Seat</th><th>Pickup area</th><th>Status</th><th>Action</th>
+        </tr></thead><tbody>${state.bookings.map(b=>{
+            const status=b.bookingStatus||b.status;
+            return `<tr>
+                <td>${escapeHtml(b.busNumber)}</td>
+                <td>${escapeHtml(b.seatNumber)}</td>
+                <td>${escapeHtml(b.areaName||"—")}</td>
+                <td>${escapeHtml(status)}</td>
+                <td>${status==="BOOKED"?`<button class="btn danger" onclick="cancelBooking(${Number(b.bookingId??b.id)})">Cancel</button>`:"—"}</td>
+            </tr>`;
+        }).join("")}</tbody></table></div>`;
+}
+
+async function cancelBooking(id) {
+    if(!confirm("Cancel this booking?")) return;
+    try {
+        await api("/student/bookings/"+id,{method:"DELETE"});
+        notice("Booking cancelled.");
+        await Promise.all([loadMyBookings(),state.selectedAreaId?loadBuses(state.selectedAreaId):Promise.resolve()]);
+    } catch(e) { notice(e.message,"error"); }
+}
+
+function openRequest() {
+    document.getElementById("requestModal").classList.add("open");
+}
+function closeRequest() {
+    document.getElementById("requestModal").classList.remove("open");
+}
+
+async function submitRequest() {
+    try {
+        await api("/student/requests",{method:"POST",body:JSON.stringify({
+            areaId:Number(state.selectedAreaId),
+            requestNote:document.getElementById("requestNote").value.trim()
+        })});
+        closeRequest();
+        document.getElementById("requestNote").value="";
+        notice("Extra-bus request submitted.");
+    } catch(e) { notice(e.message,"error"); }
+}
+
+document.getElementById("findBuses").addEventListener("click",findBuses);
+document.getElementById("refreshBookings").addEventListener("click",async()=>{
+    try { await loadMyBookings(); notice("Bookings refreshed."); }
+    catch(e) { notice(e.message,"error"); }
+});
+
+document.getElementById("logoutButton").addEventListener("click",async()=>{
+    try { await api("/logout",{method:"POST",body:"{}"}); } catch(_){}
+    location.href="login.html";
+});
+
+async function init() {
+    try {
+        await Promise.all([loadProfile(),loadAreas(),loadMyBookings()]);
+    } catch(e) {
+        notice(e.message,"error");
+    }
+}
+init();
+</script>
+</body>
+</html>

@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BusMate | Driver Dashboard</title>
+
+<style>
+:root{--purple:#6d28d9;--pink:#ec4899;--dark:#281a46;--muted:#827991;--bg:#f7f5ff;--border:#ece8f5}
+*{box-sizing:border-box;margin:0;padding:0;font-family:"Segoe UI",Arial,sans-serif}
+body{background:var(--bg);color:var(--dark)}
+button,input{font:inherit}
+header{background:white;padding:22px 5%;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap}
+.brand{font-size:27px;font-weight:850;color:var(--purple)}.brand span{color:var(--pink)}
+.profile{padding:11px 15px;border-radius:12px;background:#f4edff;font-size:14px}
+.container{max-width:1200px;margin:auto;padding:30px 22px}
+.hero{position:relative;overflow:hidden;padding:30px;border-radius:23px;color:white;background:linear-gradient(115deg,#4c1d95,#7c3aed 65%,#db2777);margin-bottom:25px}
+.hero h1{font-size:clamp(26px,4vw,36px);margin-bottom:10px}
+.hero p{color:#f3e8ff;line-height:1.6}
+.hero:after{content:"🚌";position:absolute;right:6%;top:5px;font-size:100px;opacity:.2;animation:float 4s ease-in-out infinite}
+@keyframes float{50%{transform:translateY(-10px) rotate(4deg)}}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-bottom:24px}
+.card{background:white;padding:22px;border:1px solid var(--border);border-radius:19px;box-shadow:0 8px 25px #35205e08}
+.label{font-size:14px;color:var(--muted)}
+.value{font-size:29px;font-weight:850;color:var(--purple);margin-top:10px}
+.grid{display:grid;grid-template-columns:1fr 1.4fr;gap:20px;margin-bottom:22px}
+h2{font-size:21px;margin-bottom:18px}
+.detail{display:flex;justify-content:space-between;gap:15px;padding:13px 0;border-bottom:1px solid #f0edf6;font-size:14px}
+.detail:last-child{border-bottom:0}
+.detail span{color:var(--muted)}
+.toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.btn{border:0;border-radius:10px;padding:11px 15px;font-weight:700;cursor:pointer}
+.primary{background:linear-gradient(110deg,var(--purple),var(--pink));color:white}
+.secondary{background:#f1ebff;color:var(--purple)}
+.search{padding:11px 13px;border:1px solid var(--border);border-radius:10px;outline:none}
+.table-wrap{overflow:auto;border:1px solid var(--border);border-radius:14px}
+table{width:100%;border-collapse:collapse;min-width:580px}
+th,td{text-align:left;padding:15px;border-bottom:1px solid #f0edf6;font-size:14px}
+th{background:#faf9ff;color:#706782;font-size:12px;text-transform:uppercase}
+.notice{display:none;margin-bottom:18px;padding:13px 15px;border-radius:11px}
+.notice.success{display:block;background:#dcfce7;color:#166534}
+.notice.error{display:block;background:#fee2e2;color:#991b1b}
+.empty{text-align:center;padding:30px;color:var(--muted)}
+.progress{height:9px;background:#eee9f8;border-radius:20px;overflow:hidden;margin-top:15px}
+.progress div{height:100%;background:linear-gradient(90deg,var(--purple),var(--pink))}
+@media(max-width:850px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.grid{grid-template-columns:1fr}}
+@media(max-width:550px){.container{padding:20px 12px}.hero{padding:23px}.hero:after{font-size:65px;right:3%}.card{padding:16px}.value{font-size:24px}}
+</style>
+</head>
+
+<body>
+<header>
+    <div class="brand">Bus<span>Mate.</span></div>
+    <div class="profile">🧑‍✈️ <span id="driverName">Driver</span> · <span id="driverCode">Loading...</span></div>
+    <button class="btn secondary" id="logoutButton">Logout ↗</button>
+</header>
+
+<main class="container">
+    <section class="hero">
+        <h1 id="welcomeTitle">Welcome to your driver dashboard.</h1>
+        <p>View your assigned bus, check passenger bookings, and manage your daily route.</p>
+    </section>
+
+    <div id="notice" class="notice"></div>
+
+    <section class="stats">
+        <div class="card"><div class="label">Assigned bus</div><div class="value" id="busNumber">—</div></div>
+        <div class="card"><div class="label">Seat capacity</div><div class="value" id="capacity">—</div></div>
+        <div class="card"><div class="label">Booked seats</div><div class="value" id="bookedSeats">—</div></div>
+        <div class="card"><div class="label">Available seats</div><div class="value" id="availableSeats">—</div></div>
+    </section>
+
+    <section class="grid">
+        <div class="card">
+            <h2>Assigned bus details 🚌</h2>
+            <div class="detail"><span>Bus number</span><strong id="busDetail">—</strong></div>
+            <div class="detail"><span>Bus name</span><strong id="busName">—</strong></div>
+            <div class="detail"><span>Driver code</span><strong id="driverDetailCode">—</strong></div>
+            <div class="detail"><span>Route</span><strong id="routeNames">—</strong></div>
+            <div class="detail"><span>Pickup times</span><strong id="pickupTimes">—</strong></div>
+            <div class="detail"><span>Occupancy</span><strong id="occupancyText">—</strong></div>
+            <div class="progress"><div id="occupancyBar" style="width:0%"></div></div>
+        </div>
+
+        <div class="card">
+            <div class="toolbar">
+                <h2>Passenger bookings</h2>
+                <button class="btn primary" id="refreshButton">↻ Refresh</button>
+            </div>
+            <p style="color:var(--muted);font-size:14px;line-height:1.7">
+                Passenger information is loaded from the database. Only bookings for your assigned bus should be shown.
+            </p>
+            <div style="margin-top:20px" class="detail"><span>Total passengers</span><strong id="passengerCount">—</strong></div>
+        </div>
+    </section>
+
+    <section class="card">
+        <div class="toolbar" style="margin-bottom:20px">
+            <div><h2 style="margin-bottom:6px">Booked students</h2><p style="color:var(--muted);font-size:14px">Passenger list for your assigned bus.</p></div>
+            <input id="passengerSearch" class="search" placeholder="Search name or roll number">
+        </div>
+        <div id="passengersTable"><div class="empty">Loading passengers...</div></div>
+    </section>
+</main>
+
+<script>
+const API="/api";
+const state={passengers:[],bus:null};
+
+async function api(path,options={}) {
+    const response=await fetch(API+path,{
+        credentials:"same-origin",
+        ...options,
+        headers:{"Content-Type":"application/json",...(options.headers||{})}
+    });
+
+    const text=await response.text();
+    let data={};
+    if(text){try{data=JSON.parse(text)}catch{data={message:text}}}
+
+    if(response.status===401||response.status===403)
+        throw new Error("Your session is invalid or you do not have permission.");
+    if(!response.ok)throw new Error(data.message||"Request failed.");
+    return data;
+}
+
+function escapeHtml(v){
+    return String(v??"").replace(/[&<>"']/g,c=>({
+        "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+    })[c]);
+}
+
+function notice(message,type="success"){
+    const n=document.getElementById("notice");
+    n.textContent=message;n.className="notice "+type;
+    setTimeout(()=>n.className="notice",4500);
+}
+
+async function loadDriver() {
+    const d=await api("/driver/profile");
+    const driver=d.driver||d;
+
+    document.getElementById("driverName").textContent=driver.fullName||driver.name||"Driver";
+    document.getElementById("driverCode").textContent=driver.driverCode||"";
+    document.getElementById("driverDetailCode").textContent=driver.driverCode||"";
+    document.getElementById("welcomeTitle").textContent=
+        `Hello, ${(driver.fullName||driver.name||"Driver").split(" ")[0]}! 👋`;
+}
+
+async function loadBus() {
+    const d=await api("/driver/bus");
+    state.bus=d.bus||d;
+
+    const b=state.bus;
+    const capacity=Number(b.capacity??40);
+    const booked=Number(b.bookedSeats??0);
+    const available=Number(b.availableSeats??Math.max(0,capacity-booked));
+    const percent=capacity?Math.min(100,Math.round(booked/capacity*100)):0;
+
+    document.getElementById("busNumber").textContent=b.busNumber||"—";
+    document.getElementById("capacity").textContent=capacity;
+    document.getElementById("bookedSeats").textContent=booked;
+    document.getElementById("availableSeats").textContent=available;
+    document.getElementById("busDetail").textContent=b.busNumber||"—";
+    document.getElementById("busName").textContent=b.busName||"Campus bus";
+    document.getElementById("routeNames").textContent=b.routeNames||b.areas||"—";
+    document.getElementById("pickupTimes").textContent=b.pickupTimes||b.pickupTime||"—";
+    document.getElementById("occupancyText").textContent=percent+"%";
+    document.getElementById("occupancyBar").style.width=percent+"%";
+}
+
+async function loadPassengers() {
+    const d=await api("/driver/passengers");
+    state.passengers=d.items||d.passengers||d;
+    document.getElementById("passengerCount").textContent=state.passengers.length;
+    renderPassengers();
+}
+
+function renderPassengers() {
+    const q=document.getElementById("passengerSearch").value.toLowerCase();
+    const rows=state.passengers.filter(s=>
+        [s.fullName,s.name,s.rollNumber,s.email,s.seatNumber]
+            .some(v=>String(v||"").toLowerCase().includes(q))
+    );
+
+    const target=document.getElementById("passengersTable");
+    if(!rows.length){
+        target.innerHTML='<div class="empty">No matching booked students.</div>';
+        return;
+    }
+
+    target.innerHTML=`<div class="table-wrap"><table><thead><tr>
+        <th>Student name</th><th>Roll number</th><th>Seat number</th><th>Pickup area</th>
+        </tr></thead><tbody>${rows.map(s=>`<tr>
+        <td>${escapeHtml(s.fullName||s.name)}</td>
+        <td>${escapeHtml(s.rollNumber)}</td>
+        <td>${escapeHtml(s.seatNumber)}</td>
+        <td>${escapeHtml(s.areaName||"—")}</td>
+        </tr>`).join("")}</tbody></table></div>`;
+}
+
+async function refreshAll() {
+    try {
+        await Promise.all([loadDriver(),loadBus(),loadPassengers()]);
+        notice("Dashboard updated.");
+    } catch(e) { notice(e.message,"error"); }
+}
+
+document.getElementById("refreshButton").addEventListener("click",refreshAll);
+document.getElementById("passengerSearch").addEventListener("input",renderPassengers);
+
+document.getElementById("logoutButton").addEventListener("click",async()=>{
+    try{await api("/logout",{method:"POST",body:"{}"})}catch(_){}
+    location.href="login.html";
+});
+
+refreshAll();
+</script>
+</body>
+</html>

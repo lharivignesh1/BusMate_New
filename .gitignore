@@ -1,0 +1,13 @@
+# Java build files
+backend/target/
+
+# Secrets and local environment files
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# IDE files
+.idea/
+.vscode/

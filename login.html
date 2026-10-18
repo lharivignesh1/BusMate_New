@@ -1,0 +1,1111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BusMate | Smart Campus Transport</title>
+
+<style>
+:root {
+    --purple: #7957ff;
+    --pink: #f56ac8;
+    --dark: #17142e;
+    --muted: #817e9b;
+    --glass: rgba(255,255,255,0.78);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Segoe UI", Arial, sans-serif;
+    min-height: 100vh;
+    color: var(--dark);
+    background:
+        radial-gradient(ellipse at 10% 15%, #e6dcff 0, transparent 36%),
+        radial-gradient(ellipse at 90% 85%, #ffddf4 0, transparent 38%),
+        #f9f7ff;
+    overflow-x: hidden;
+}
+
+/* Background effects */
+
+.background-orb {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(2px);
+    pointer-events: none;
+    z-index: 0;
+    animation: floatOrb 9s ease-in-out infinite;
+}
+
+.orb-one {
+    width: 180px;
+    height: 180px;
+    top: 16%;
+    left: -70px;
+    background: linear-gradient(135deg, #c6b4ff, #f2b7eb);
+    opacity: .45;
+}
+
+.orb-two {
+    width: 240px;
+    height: 240px;
+    bottom: 4%;
+    right: -80px;
+    background: linear-gradient(135deg, #ffb9e8, #bca8ff);
+    opacity: .4;
+    animation-delay: -4s;
+}
+
+.orb-three {
+    width: 90px;
+    height: 90px;
+    top: 12%;
+    right: 15%;
+    background: #d5c8ff;
+    opacity: .45;
+    animation-delay: -2s;
+}
+
+@keyframes floatOrb {
+    0%, 100% { transform: translate3d(0,0,0); }
+    50% { transform: translate3d(18px,-28px,0); }
+}
+
+/* Navbar */
+
+.navbar {
+    height: 82px;
+    padding: 0 7%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    z-index: 5;
+    border-bottom: 1px solid rgba(130,100,200,.12);
+    background: rgba(255,255,255,.45);
+    backdrop-filter: blur(15px);
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    color: var(--dark);
+    font-size: 25px;
+    font-weight: 850;
+    letter-spacing: -.7px;
+}
+
+.logo-icon {
+    width: 43px;
+    height: 43px;
+    display: grid;
+    place-items: center;
+    color: white;
+    border-radius: 14px;
+    background: linear-gradient(135deg, var(--purple), var(--pink));
+    box-shadow: 0 7px 20px rgba(121,87,255,.3);
+    font-size: 23px;
+}
+
+.logo span {
+    color: var(--purple);
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: #55516e;
+    font-size: 13px;
+    font-weight: 650;
+    transition: color .25s;
+}
+
+.nav-links a:hover {
+    color: var(--purple);
+}
+
+/* Main layout */
+
+.main {
+    width: min(1120px, 90%);
+    margin: 45px auto;
+    min-height: calc(100vh - 180px);
+    display: grid;
+    grid-template-columns: 1.1fr .9fr;
+    gap: 60px;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+}
+
+/* Left section */
+
+.hero {
+    padding: 25px 0;
+    animation: slideLeft .9s ease both;
+}
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 10px 15px;
+    border: 1px solid #e1d8ff;
+    border-radius: 30px;
+    background: rgba(255,255,255,.65);
+    color: #7050ed;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1.1px;
+    margin-bottom: 28px;
+}
+
+.pulse {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #36c99a;
+    box-shadow: 0 0 0 5px rgba(54,201,154,.12);
+}
+
+.hero h1 {
+    font-size: clamp(42px, 5vw, 66px);
+    letter-spacing: -2.7px;
+    line-height: 1.08;
+    font-weight: 850;
+    max-width: 570px;
+}
+
+.gradient-text {
+    display: inline-block;
+    background: linear-gradient(100deg, #7856ff 15%, #b25cf0 55%, #f064bc);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.hero-description {
+    max-width: 450px;
+    margin-top: 24px;
+    color: var(--muted);
+    line-height: 1.9;
+    font-size: 14px;
+}
+
+.feature-list {
+    display: grid;
+    gap: 17px;
+    margin-top: 34px;
+}
+
+.feature {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    font-size: 13px;
+    font-weight: 650;
+    color: #45415e;
+}
+
+.feature-icon {
+    flex-shrink: 0;
+    width: 43px;
+    height: 43px;
+    display: grid;
+    place-items: center;
+    border-radius: 14px;
+    background: rgba(255,255,255,.85);
+    border: 1px solid #e9e2ff;
+    box-shadow: 0 5px 15px rgba(93,68,155,.06);
+    font-size: 19px;
+    transition: transform .3s, box-shadow .3s;
+}
+
+.feature:hover .feature-icon {
+    transform: translateY(-4px) rotate(-5deg);
+    box-shadow: 0 10px 20px rgba(121,87,255,.15);
+}
+
+/* 3D bus illustration */
+
+.visual-stage {
+    position: relative;
+    width: min(100%, 440px);
+    height: 150px;
+    margin-top: 35px;
+    perspective: 900px;
+}
+
+.road {
+    position: absolute;
+    bottom: 10px;
+    left: 0;
+    width: 100%;
+    height: 48px;
+    background: linear-gradient(180deg, #e7e0fa, #d8d0f0);
+    border-radius: 50%;
+    transform: rotateX(55deg);
+    box-shadow: 0 15px 25px rgba(89,67,143,.12);
+}
+
+.road::after {
+    content: "";
+    position: absolute;
+    left: 10%;
+    right: 10%;
+    top: 50%;
+    border-top: 3px dashed rgba(121,87,255,.45);
+}
+
+.bus-3d {
+    position: absolute;
+    width: 175px;
+    height: 85px;
+    bottom: 42px;
+    left: 50%;
+    transform: translateX(-50%) rotateY(-12deg) rotateX(3deg);
+    transform-style: preserve-3d;
+    animation: busFloat 4s ease-in-out infinite;
+}
+
+.bus-body {
+    position: absolute;
+    inset: 0;
+    border-radius: 18px 18px 11px 11px;
+    background: linear-gradient(145deg, #967bff, #704cf0);
+    box-shadow: 12px 17px 25px rgba(91,64,190,.25);
+    border: 1px solid rgba(255,255,255,.65);
+}
+
+.bus-windows {
+    position: absolute;
+    top: 12px;
+    left: 13px;
+    right: 13px;
+    height: 29px;
+    display: flex;
+    gap: 5px;
+}
+
+.bus-window {
+    flex: 1;
+    border-radius: 5px;
+    background: linear-gradient(135deg, #f3f1ff, #c6b6ff);
+    border: 1px solid rgba(255,255,255,.7);
+}
+
+.bus-front {
+    position: absolute;
+    right: -10px;
+    top: 17px;
+    width: 13px;
+    height: 48px;
+    background: linear-gradient(90deg, #bcaeff, #7451ec);
+    transform: skewY(-12deg);
+    border-radius: 0 8px 8px 0;
+}
+
+.bus-lights {
+    position: absolute;
+    right: 1px;
+    top: 52px;
+    width: 7px;
+    height: 8px;
+    background: #ffe9a5;
+    border-radius: 3px;
+    box-shadow: 0 0 9px #ffe9a5;
+}
+
+.wheel {
+    position: absolute;
+    bottom: -9px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #48425f, #17142e);
+    border: 5px solid #fff;
+    box-shadow: 0 3px 7px rgba(0,0,0,.15);
+}
+
+.wheel-one { left: 23px; }
+.wheel-two { right: 17px; }
+
+.bus-label {
+    position: absolute;
+    top: 47px;
+    left: 17px;
+    color: white;
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 1.3px;
+}
+
+.floating-card {
+    position: absolute;
+    padding: 12px 15px;
+    border-radius: 13px;
+    background: rgba(255,255,255,.9);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,.95);
+    box-shadow: 0 12px 30px rgba(86,64,160,.12);
+    font-size: 11px;
+    font-weight: 750;
+    animation: floatCard 4s ease-in-out infinite;
+}
+
+.floating-card span {
+    color: #16a579;
+    display: block;
+    margin-top: 5px;
+    font-size: 10px;
+}
+
+.card-left {
+    top: 5px;
+    left: 0;
+}
+
+.card-right {
+    top: 18px;
+    right: -5px;
+    animation-delay: -2s;
+}
+
+@keyframes busFloat {
+    0%, 100% {
+        transform: translate(-50%, 0) rotateY(-12deg) rotateX(3deg);
+    }
+    50% {
+        transform: translate(-50%, -9px) rotateY(-8deg) rotateX(3deg);
+    }
+}
+
+@keyframes floatCard {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+}
+
+@keyframes slideLeft {
+    from { opacity: 0; transform: translateX(-28px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes slideRight {
+    from { opacity: 0; transform: translateX(28px) scale(.98); }
+    to { opacity: 1; transform: translateX(0) scale(1); }
+}
+
+/* Login card */
+
+.login-area {
+    perspective: 1200px;
+    animation: slideRight .9s ease both;
+}
+
+.login-card {
+    position: relative;
+    padding: 35px;
+    border-radius: 27px;
+    border: 1px solid rgba(255,255,255,.95);
+    background: var(--glass);
+    backdrop-filter: blur(24px);
+    box-shadow:
+        0 30px 80px rgba(87,62,164,.12),
+        inset 0 1px 0 rgba(255,255,255,.9);
+    transform-style: preserve-3d;
+    transition: transform .2s ease, box-shadow .3s ease;
+}
+
+.login-card::before {
+    content: "";
+    position: absolute;
+    top: -1px;
+    left: 14%;
+    right: 14%;
+    height: 3px;
+    border-radius: 20px;
+    background: linear-gradient(90deg, transparent, #977dff, #f36bc2, transparent);
+}
+
+.login-card h2 {
+    font-size: 29px;
+    font-weight: 850;
+    letter-spacing: -.8px;
+    margin-bottom: 9px;
+}
+
+.login-subtitle {
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.7;
+    margin-bottom: 26px;
+}
+
+.card-symbol {
+    width: 58px;
+    height: 58px;
+    border-radius: 18px;
+    display: grid;
+    place-items: center;
+    margin-bottom: 23px;
+    font-size: 25px;
+    background: linear-gradient(135deg, #e9e1ff, #ffe3f4);
+    box-shadow: 0 9px 20px rgba(121,87,255,.1);
+    transform: translateZ(25px);
+}
+
+.form-group {
+    margin-bottom: 19px;
+    transform: translateZ(12px);
+}
+
+label {
+    display: block;
+    font-size: 12px;
+    font-weight: 750;
+    margin-bottom: 9px;
+    color: #393551;
+}
+
+.input-wrap {
+    position: relative;
+}
+
+.input-wrap input,
+.input-wrap select {
+    width: 100%;
+    height: 49px;
+    border: 1px solid #e5dff6;
+    border-radius: 12px;
+    outline: none;
+    padding: 0 14px;
+    background: rgba(255,255,255,.83);
+    color: var(--dark);
+    font-size: 13px;
+    transition: border .25s, box-shadow .25s, background .25s;
+}
+
+.input-wrap input::placeholder {
+    color: #aaa5bb;
+}
+
+.input-wrap input:focus,
+.input-wrap select:focus {
+    border-color: #9b81ff;
+    background: white;
+    box-shadow: 0 0 0 4px rgba(121,87,255,.09);
+}
+
+.password-wrap input {
+    padding-right: 70px;
+}
+
+.toggle-password {
+    position: absolute;
+    top: 50%;
+    right: 13px;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--purple);
+    font-weight: 800;
+    font-size: 11px;
+    cursor: pointer;
+}
+
+.form-options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin: 5px 0 22px;
+    font-size: 11px;
+}
+
+.remember {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    color: var(--muted);
+    cursor: pointer;
+}
+
+.remember input {
+    accent-color: var(--purple);
+}
+
+.form-options a {
+    color: var(--purple);
+    text-decoration: none;
+    font-weight: 750;
+}
+
+.login-button {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    height: 52px;
+    border: none;
+    border-radius: 13px;
+    color: white;
+    background: linear-gradient(100deg, #7654f8, #9d65f0, #e665c3);
+    box-shadow: 0 12px 25px rgba(121,87,255,.27);
+    font-size: 13px;
+    font-weight: 850;
+    cursor: pointer;
+    transition: transform .25s, box-shadow .25s, opacity .25s;
+    transform: translateZ(18px);
+}
+
+.login-button::before {
+    content: "";
+    position: absolute;
+    top: -50%;
+    left: -80%;
+    width: 45%;
+    height: 200%;
+    background: rgba(255,255,255,.25);
+    transform: rotate(25deg);
+    transition: left .55s;
+}
+
+.login-button:hover::before {
+    left: 130%;
+}
+
+.login-button:hover:not(:disabled) {
+    transform: translateY(-3px) translateZ(18px);
+    box-shadow: 0 17px 32px rgba(121,87,255,.35);
+}
+
+.login-button:active:not(:disabled) {
+    transform: translateY(0) translateZ(18px);
+}
+
+.login-button:disabled {
+    opacity: .65;
+    cursor: not-allowed;
+}
+
+.message {
+    display: none;
+    padding: 12px 14px;
+    margin-bottom: 17px;
+    border-radius: 11px;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.message.error {
+    display: block;
+    background: #fff0f2;
+    color: #bc304b;
+}
+
+.message.success {
+    display: block;
+    background: #e9fff5;
+    color: #087c57;
+}
+
+.security-note {
+    margin-top: 21px;
+    padding-top: 18px;
+    border-top: 1px solid #ece7f8;
+    display: flex;
+    gap: 9px;
+    align-items: flex-start;
+    color: var(--muted);
+    font-size: 10px;
+    line-height: 1.8;
+}
+
+.security-note b {
+    color: #56506f;
+}
+
+.footer {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    color: #8b86a2;
+    font-size: 11px;
+    padding: 20px;
+}
+
+/* Responsive */
+
+@media (max-width: 900px) {
+    .main {
+        grid-template-columns: 1fr 1fr;
+        gap: 28px;
+        width: 92%;
+    }
+
+    .hero h1 {
+        font-size: 45px;
+    }
+
+    .login-card {
+        padding: 26px;
+    }
+
+    .visual-stage {
+        transform: scale(.9);
+        transform-origin: left center;
+    }
+}
+
+@media (max-width: 700px) {
+    .navbar {
+        padding: 16px 5%;
+        height: auto;
+        min-height: 72px;
+    }
+
+    .nav-links {
+        gap: 17px;
+    }
+
+    .main {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 15px;
+        margin: 28px auto;
+        width: min(92%, 460px);
+    }
+
+    .hero {
+        padding: 8px 0;
+    }
+
+    .hero h1 {
+        font-size: 43px;
+    }
+
+    .hero-description {
+        font-size: 13px;
+    }
+
+    .feature-list {
+        gap: 12px;
+    }
+
+    .visual-stage {
+        width: 100%;
+        max-width: 400px;
+        margin: 20px auto 5px;
+        transform: scale(.9);
+        transform-origin: center center;
+    }
+
+    .login-card {
+        padding: 27px 23px;
+    }
+}
+
+@media (max-width: 420px) {
+    .logo {
+        font-size: 22px;
+    }
+
+    .logo-icon {
+        width: 38px;
+        height: 38px;
+    }
+
+    .nav-links {
+        gap: 13px;
+    }
+
+    .nav-links a {
+        font-size: 12px;
+    }
+
+    .hero h1 {
+        font-size: 37px;
+        letter-spacing: -1.7px;
+    }
+
+    .visual-stage {
+        transform: scale(.78);
+        margin-top: 10px;
+        margin-bottom: -10px;
+    }
+
+    .login-card h2 {
+        font-size: 25px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: .01ms !important;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="background-orb orb-one"></div>
+<div class="background-orb orb-two"></div>
+<div class="background-orb orb-three"></div>
+
+<header class="navbar">
+    <a href="home.html" class="logo">
+        <div class="logo-icon">🚌</div>
+        Bus<span>Mate</span>
+    </a>
+
+    <nav class="nav-links">
+        <a href="home.html">Home</a>
+        <a href="about.html">About Us</a>
+    </nav>
+</header>
+
+<main class="main">
+
+    <section class="hero">
+        <div class="badge">
+            <span class="pulse"></span>
+            SMART CAMPUS TRANSPORT
+        </div>
+
+        <h1>
+            Your journey.<br>
+            Your seat.<br>
+            <span class="gradient-text">Your campus.</span>
+        </h1>
+
+        <p class="hero-description">
+            Your campus commute, reimagined. Discover bus routes, check
+            available seats, and manage your journey with BusMate.
+        </p>
+
+        <div class="feature-list">
+            <div class="feature">
+                <div class="feature-icon">🚌</div>
+                <span>Explore buses and campus routes</span>
+            </div>
+
+            <div class="feature">
+                <div class="feature-icon">🎟️</div>
+                <span>Reserve your seat with ease</span>
+            </div>
+
+            <div class="feature">
+                <div class="feature-icon">🛡️</div>
+                <span>Separate access for students and drivers</span>
+            </div>
+        </div>
+
+        <div class="visual-stage" aria-hidden="true">
+            <div class="road"></div>
+
+            <div class="floating-card card-left">
+                Seat availability
+                <span>● Live when connected</span>
+            </div>
+
+            <div class="floating-card card-right">
+                Campus route
+                <span>✦ Smart commute</span>
+            </div>
+
+            <div class="bus-3d">
+                <div class="bus-body"></div>
+
+                <div class="bus-windows">
+                    <div class="bus-window"></div>
+                    <div class="bus-window"></div>
+                    <div class="bus-window"></div>
+                </div>
+
+                <div class="bus-front"></div>
+                <div class="bus-lights"></div>
+                <div class="bus-label">BUSMATE</div>
+
+                <div class="wheel wheel-one"></div>
+                <div class="wheel wheel-two"></div>
+            </div>
+        </div>
+    </section>
+
+    <section class="login-area">
+        <div class="login-card" id="loginCard">
+
+            <div class="card-symbol">🔐</div>
+
+            <h2>Welcome back!</h2>
+
+            <p class="login-subtitle">
+                Sign in to continue to your BusMate dashboard.
+            </p>
+
+            <div id="message" class="message" role="alert"></div>
+
+            <form id="loginForm">
+
+                <div class="form-group">
+                    <label for="role">Sign in as</label>
+
+                    <div class="input-wrap">
+                        <select id="role" name="role" required>
+                            <option value="STUDENT">🎓 Student</option>
+                            <option value="DRIVER">🚌 Driver</option>
+                            <option value="ADMIN">⚙️ Administrator</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email address</label>
+
+                    <div class="input-wrap">
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            placeholder="Enter your email address"
+                            autocomplete="username"
+                            required
+                        >
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+
+                    <div class="input-wrap password-wrap">
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            placeholder="Enter your password"
+                            autocomplete="current-password"
+                            required
+                        >
+
+                        <button
+                            type="button"
+                            class="toggle-password"
+                            id="togglePassword"
+                        >SHOW</button>
+                    </div>
+                </div>
+
+                <div class="form-options">
+                    <label class="remember">
+                        <input type="checkbox" id="remember">
+                        Remember email
+                    </label>
+
+                    <a href="mailto:hariini2526@gmail.com?subject=BusMate%20Login%20Help">
+                        Need help?
+                    </a>
+                </div>
+
+                <button type="submit" class="login-button" id="loginButton">
+                    <span id="buttonText">Sign In to BusMate&nbsp; →</span>
+                </button>
+            </form>
+
+            <div class="security-note">
+                <span>🔒</span>
+                <span>
+                    <b>Secure access.</b>
+                    Accounts are created by the administrator.
+                    Student and driver self-registration is disabled.
+                </span>
+            </div>
+
+        </div>
+    </section>
+
+</main>
+
+<footer class="footer">
+    © 2026 BusMate · Smart Campus Transport
+</footer>
+
+<script>
+const loginForm = document.getElementById("loginForm");
+const roleInput = document.getElementById("role");
+const emailInput = document.getElementById("email");
+const passwordInput = document.getElementById("password");
+const loginButton = document.getElementById("loginButton");
+const buttonText = document.getElementById("buttonText");
+const message = document.getElementById("message");
+const loginCard = document.getElementById("loginCard");
+
+function showMessage(text, type) {
+    message.textContent = text;
+    message.className = "message " + type;
+}
+
+function clearMessage() {
+    message.textContent = "";
+    message.className = "message";
+}
+
+/* Show/hide password */
+
+document.getElementById("togglePassword").addEventListener("click", () => {
+    const showing = passwordInput.type === "text";
+
+    passwordInput.type = showing ? "password" : "text";
+
+    document.getElementById("togglePassword").textContent =
+        showing ? "SHOW" : "HIDE";
+});
+
+/* Remember email only, never the password */
+
+const savedEmail = localStorage.getItem("busmateRememberedEmail");
+
+if (savedEmail) {
+    emailInput.value = savedEmail;
+    document.getElementById("remember").checked = true;
+}
+
+document.getElementById("remember").addEventListener("change", () => {
+    if (!document.getElementById("remember").checked) {
+        localStorage.removeItem("busmateRememberedEmail");
+    }
+});
+
+/* 3D mouse tilt */
+
+const reduceMotion = window.matchMedia(
+    "(prefers-reduced-motion: reduce)"
+).matches;
+
+if (!reduceMotion && window.matchMedia("(pointer: fine)").matches) {
+    loginCard.addEventListener("mousemove", (event) => {
+        const rect = loginCard.getBoundingClientRect();
+
+        const x = (event.clientX - rect.left) / rect.width;
+        const y = (event.clientY - rect.top) / rect.height;
+
+        const rotateY = (x - 0.5) * 4;
+        const rotateX = (0.5 - y) * 4;
+
+        loginCard.style.transform =
+            `perspective(1200px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+    });
+
+    loginCard.addEventListener("mouseleave", () => {
+        loginCard.style.transform =
+            "perspective(1200px) rotateX(0deg) rotateY(0deg)";
+    });
+}
+
+/* Backend authentication */
+
+loginForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    clearMessage();
+
+    const role = roleInput.value;
+    const email = emailInput.value.trim();
+    const password = passwordInput.value;
+
+    if (!email || !password) {
+        showMessage("Enter your email and password.", "error");
+        return;
+    }
+
+    if (
+        role === "STUDENT" &&
+        !email.toLowerCase().endsWith("@rajalakshmi.edu.in")
+    ) {
+        showMessage(
+            "Use your college email ending in @rajalakshmi.edu.in.",
+            "error"
+        );
+        return;
+    }
+
+    if (document.getElementById("remember").checked) {
+        localStorage.setItem("busmateRememberedEmail", email);
+    } else {
+        localStorage.removeItem("busmateRememberedEmail");
+    }
+
+    loginButton.disabled = true;
+    buttonText.textContent = "Authenticating...";
+
+    try {
+        const response = await fetch("/api/login", {
+            method: "POST",
+            credentials: "same-origin",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                role,
+                email,
+                password
+            })
+        });
+
+        const result = await response.json().catch(() => ({}));
+
+        if (!response.ok) {
+            throw new Error(
+                result.message || "Invalid email, password, or account role."
+            );
+        }
+
+        const authenticatedRole = String(result.role || "").toUpperCase();
+
+        if (authenticatedRole !== role) {
+            throw new Error("Authentication response did not match the selected role.");
+        }
+
+        const routes = {
+            STUDENT: "student.html",
+            DRIVER: "driver.html",
+            ADMIN: "admin.html"
+        };
+
+        if (!routes[authenticatedRole]) {
+            throw new Error("Unsupported account role.");
+        }
+
+        showMessage("Login successful! Opening your dashboard...", "success");
+
+        window.location.replace(routes[authenticatedRole]);
+
+    } catch (error) {
+        showMessage(
+            error.message ||
+            "Unable to connect to the server. Please try again.",
+            "error"
+        );
+    } finally {
+        loginButton.disabled = false;
+        buttonText.textContent = "Sign In to BusMate →";
+    }
+});
+</script>
+
+</body>
+</html>
