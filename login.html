@@ -759,6 +759,29 @@ label {
         transition-duration: .01ms !important;
     }
 }
+
+        .trip-picker{margin:0 0 22px;padding:14px;border:1px solid #e7dcff;border-radius:16px;background:linear-gradient(135deg,#f8f4ff,#fff5fb);}
+        .trip-picker-heading{display:flex;align-items:center;justify-content:space-between;margin-bottom:11px;color:#31264f;font-size:13px;font-weight:800;}
+        .trip-required{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:#8b54d8;background:#eee4ff;padding:5px 8px;border-radius:20px;}
+        .trip-choice-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;}
+        .trip-choice{display:flex;align-items:center;gap:9px;text-align:left;position:relative;min-width:0;padding:11px 10px;border:1.5px solid #e4d9f7;border-radius:12px;background:#fff;color:#29213f;cursor:pointer;transition:.2s;}
+        .trip-choice:hover{border-color:#a77be9;transform:translateY(-1px);}
+        .trip-choice.active{border-color:#8b54d8;background:#f4edff;box-shadow:0 0 0 2px #eadfff;}
+        .trip-choice-icon{font-size:20px;flex-shrink:0;}
+        .trip-choice-text{display:flex;flex-direction:column;gap:3px;min-width:0;}
+        .trip-choice-text strong{font-size:11px;white-space:nowrap;}
+        .trip-choice-text small{font-size:9px;color:#77718d;white-space:nowrap;}
+        .trip-check{display:none;margin-left:auto;color:#8b54d8;font-weight:900;}
+        .trip-choice.active .trip-check{display:block;}
+        .trip-picker-note{margin-top:9px;font-size:11px;color:#77718d;}
+        @media(max-width:420px){.trip-choice-grid{grid-template-columns:1fr}.trip-choice-text strong{font-size:12px}.trip-choice-text small{font-size:10px}}
+
+
+        .trip-selected-banner{display:flex;align-items:center;gap:9px;margin:18px 0 20px;padding:11px 13px;border:1px solid #eadcfb;border-radius:13px;background:linear-gradient(100deg,#f4edff,#fff0fb);color:#7650c9;font-size:12px;font-weight:700;}
+        .trip-selected-icon{font-size:16px;flex-shrink:0}
+        .trip-selected-label{flex:1;min-width:0}
+        .trip-change-button{border:0;background:transparent;color:#8b45d8;font-weight:800;font-size:12px;cursor:pointer;padding:5px 2px;text-decoration:underline;text-underline-offset:3px}
+        .trip-change-button:hover{color:#d34fb8}
 </style>
 </head>
 
@@ -859,6 +882,12 @@ label {
                 Sign in to continue to your BusMate dashboard.
             </p>
 
+            <div class="trip-selected-banner" id="tripSelectedBanner">
+                <span class="trip-selected-icon">🚌</span>
+                <span class="trip-selected-label" id="tripSelectedLabel">Morning Trip · Pickup area → College</span>
+                <button type="button" class="trip-change-button" id="changeTripButton">Change</button>
+            </div>
+
             <div id="message" class="message" role="alert"></div>
 
             <form id="loginForm">
@@ -955,6 +984,23 @@ const buttonText = document.getElementById("buttonText");
 const message = document.getElementById("message");
 const loginCard = document.getElementById("loginCard");
 
+// The home page selection is retained and displayed here.
+let selectedTrip = sessionStorage.getItem("busmateTrip");
+if (selectedTrip !== "MORNING" && selectedTrip !== "RETURN") selectedTrip = "MORNING";
+const tripSelectedLabel = document.getElementById("tripSelectedLabel");
+function displaySelectedTrip(trip) {
+    selectedTrip = trip;
+    sessionStorage.setItem("busmateTrip", trip);
+    tripSelectedLabel.textContent = trip === "MORNING"
+        ? "🌅 Morning Trip · Pickup area → College"
+        : "🌆 Return Trip · College → Pickup area";
+}
+displaySelectedTrip(selectedTrip);
+document.getElementById("changeTripButton").addEventListener("click", () => {
+    // Return to the home page and reopen its trip-selection modal.
+    window.location.href = "home.html?chooseTrip=1";
+});
+
 function showMessage(text, type) {
     message.textContent = text;
     message.className = "message " + type;
@@ -1037,7 +1083,7 @@ loginForm.addEventListener("submit", async (event) => {
         !email.toLowerCase().endsWith("@rajalakshmi.edu.in")
     ) {
         showMessage(
-            "Use your college email ending in @rajalakshmi.edu.in.",
+            "Use your registered college email ending in @rajalakshmi.edu.in.",
             "error"
         );
         return;
@@ -1062,7 +1108,8 @@ loginForm.addEventListener("submit", async (event) => {
             body: JSON.stringify({
                 role,
                 email,
-                password
+                password,
+                tripType: selectedTrip
             })
         });
 
@@ -1070,11 +1117,11 @@ loginForm.addEventListener("submit", async (event) => {
 
         if (!response.ok) {
             throw new Error(
-                result.message || "Invalid email, password, or account role."
+                result.error || result.message || "Invalid email, password, or account role."
             );
         }
 
-        const authenticatedRole = String(result.role || "").toUpperCase();
+        const authenticatedRole = String(result.user?.role || result.role || "").toUpperCase();
 
         if (authenticatedRole !== role) {
             throw new Error("Authentication response did not match the selected role.");
@@ -1090,8 +1137,13 @@ loginForm.addEventListener("submit", async (event) => {
             throw new Error("Unsupported account role.");
         }
 
+        // Keep the selected trip available to the student dashboard.
+        if (authenticatedRole === "STUDENT") {
+            sessionStorage.setItem("busmateTrip", selectedTrip);
+        } else if (authenticatedRole === "DRIVER") {
+            sessionStorage.setItem("busmateDriverTrip", selectedTrip);
+        }
         showMessage("Login successful! Opening your dashboard...", "success");
-
         window.location.replace(routes[authenticatedRole]);
 
     } catch (error) {

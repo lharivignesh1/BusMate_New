@@ -4,23 +4,24 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BusMate | Driver Dashboard</title>
-
 <style>
-:root{--purple:#6d28d9;--pink:#ec4899;--dark:#281a46;--muted:#827991;--bg:#f7f5ff;--border:#ece8f5}
+:root{--purple:#6d28d9;--pink:#ec4899;--dark:#281a46;--muted:#827991;--bg:#f7f5ff;--border:#ece8f5;--green:#15803d;--red:#b91c1c;--amber:#b45309}
 *{box-sizing:border-box;margin:0;padding:0;font-family:"Segoe UI",Arial,sans-serif}
 body{background:var(--bg);color:var(--dark)}
 button,input{font:inherit}
-header{background:white;padding:22px 5%;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap}
-.brand{font-size:27px;font-weight:850;color:var(--purple)}.brand span{color:var(--pink)}
+header{background:#fff;padding:20px 5%;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap}
+.brand{font-size:27px;font-weight:850;color:var(--purple)}
+.brand span{color:var(--pink)}
 .profile{padding:11px 15px;border-radius:12px;background:#f4edff;font-size:14px}
-.container{max-width:1200px;margin:auto;padding:30px 22px}
-.hero{position:relative;overflow:hidden;padding:30px;border-radius:23px;color:white;background:linear-gradient(115deg,#4c1d95,#7c3aed 65%,#db2777);margin-bottom:25px}
+.container{max-width:1250px;margin:auto;padding:30px 22px}
+.hero{position:relative;overflow:hidden;padding:30px;border-radius:23px;color:#fff;background:linear-gradient(115deg,#4c1d95,#7c3aed 65%,#db2777);margin-bottom:25px}
 .hero h1{font-size:clamp(26px,4vw,36px);margin-bottom:10px}
 .hero p{color:#f3e8ff;line-height:1.6}
 .hero:after{content:"🚌";position:absolute;right:6%;top:5px;font-size:100px;opacity:.2;animation:float 4s ease-in-out infinite}
 @keyframes float{50%{transform:translateY(-10px) rotate(4deg)}}
+.trip-pill{display:inline-flex;margin-top:15px;padding:8px 13px;border-radius:30px;background:#ffffff25;border:1px solid #ffffff55;font-weight:800;letter-spacing:.4px}
 .stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-bottom:24px}
-.card{background:white;padding:22px;border:1px solid var(--border);border-radius:19px;box-shadow:0 8px 25px #35205e08}
+.card{background:#fff;padding:22px;border:1px solid var(--border);border-radius:19px;box-shadow:0 8px 25px #35205e08}
 .label{font-size:14px;color:var(--muted)}
 .value{font-size:29px;font-weight:850;color:var(--purple);margin-top:10px}
 .grid{display:grid;grid-template-columns:1fr 1.4fr;gap:20px;margin-bottom:22px}
@@ -30,19 +31,34 @@ h2{font-size:21px;margin-bottom:18px}
 .detail span{color:var(--muted)}
 .toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
 .btn{border:0;border-radius:10px;padding:11px 15px;font-weight:700;cursor:pointer}
-.primary{background:linear-gradient(110deg,var(--purple),var(--pink));color:white}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+.primary{background:linear-gradient(110deg,var(--purple),var(--pink));color:#fff}
 .secondary{background:#f1ebff;color:var(--purple)}
 .search{padding:11px 13px;border:1px solid var(--border);border-radius:10px;outline:none}
+.search:focus{border-color:var(--purple);box-shadow:0 0 0 3px #6d28d91a}
 .table-wrap{overflow:auto;border:1px solid var(--border);border-radius:14px}
-table{width:100%;border-collapse:collapse;min-width:580px}
-th,td{text-align:left;padding:15px;border-bottom:1px solid #f0edf6;font-size:14px}
+table{width:100%;border-collapse:collapse;min-width:850px}
+th,td{text-align:left;padding:14px;border-bottom:1px solid #f0edf6;font-size:14px}
 th{background:#faf9ff;color:#706782;font-size:12px;text-transform:uppercase}
 .notice{display:none;margin-bottom:18px;padding:13px 15px;border-radius:11px}
 .notice.success{display:block;background:#dcfce7;color:#166534}
 .notice.error{display:block;background:#fee2e2;color:#991b1b}
+.notice.info{display:block;background:#e0f2fe;color:#075985}
 .empty{text-align:center;padding:30px;color:var(--muted)}
 .progress{height:9px;background:#eee9f8;border-radius:20px;overflow:hidden;margin-top:15px}
 .progress div{height:100%;background:linear-gradient(90deg,var(--purple),var(--pink))}
+.status{display:inline-block;padding:5px 9px;border-radius:20px;font-size:12px;font-weight:800;white-space:nowrap}
+.status.booked,.status.pending{background:#fff7ed;color:var(--amber)}
+.status.boarded,.status.dropped,.status.verified{background:#dcfce7;color:var(--green)}
+.status.cancelled,.status.rejected{background:#fee2e2;color:var(--red)}
+.otp-panel{margin:0 0 22px;border:2px solid #e9ddff;background:linear-gradient(135deg,#fff 0%,#faf6ff 100%)}
+.otp-entry{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:15px}
+.otp-entry input{width:190px;max-width:100%;font-size:25px;letter-spacing:9px;text-align:center;font-weight:850;padding:13px;border:2px solid #ded0f7;border-radius:12px;outline:none}
+.otp-entry input:focus{border-color:var(--purple);box-shadow:0 0 0 4px #6d28d91a}
+.otp-result{display:none;margin-top:17px;padding:15px;border-radius:12px;background:#f0fdf4;border:1px solid #bbf7d0;color:#166534;line-height:1.7}
+.otp-result.error{background:#fef2f2;border-color:#fecaca;color:#991b1b}
+.otp-result.show{display:block}
+.helper{color:var(--muted);font-size:13px;line-height:1.6;margin-top:10px}
 @media(max-width:850px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.grid{grid-template-columns:1fr}}
 @media(max-width:550px){.container{padding:20px 12px}.hero{padding:23px}.hero:after{font-size:65px;right:3%}.card{padding:16px}.value{font-size:24px}}
 </style>
@@ -50,171 +66,769 @@ th{background:#faf9ff;color:#706782;font-size:12px;text-transform:uppercase}
 
 <body>
 <header>
-    <div class="brand">Bus<span>Mate.</span></div>
-    <div class="profile">🧑‍✈️ <span id="driverName">Driver</span> · <span id="driverCode">Loading...</span></div>
-    <button class="btn secondary" id="logoutButton">Logout ↗</button>
+  <div class="brand">Bus<span>Mate.</span></div>
+  <div class="profile">🧑‍✈️ <span id="driverName">Driver</span> · <span id="driverCode">Loading...</span></div>
+  <button class="btn secondary" id="logoutButton">Logout ↗</button>
 </header>
 
 <main class="container">
-    <section class="hero">
-        <h1 id="welcomeTitle">Welcome to your driver dashboard.</h1>
-        <p>View your assigned bus, check passenger bookings, and manage your daily route.</p>
-    </section>
 
-    <div id="notice" class="notice"></div>
+  <section class="hero">
+    <h1 id="welcomeTitle">Welcome to your driver dashboard.</h1>
+    <p>View your assigned bus, check passengers, and verify boarding or drop-off using each student's 4-digit OTP.</p>
+    <div class="trip-pill" id="tripBadge">LOADING LOGIN TRIP…</div>
+  </section>
 
-    <section class="stats">
-        <div class="card"><div class="label">Assigned bus</div><div class="value" id="busNumber">—</div></div>
-        <div class="card"><div class="label">Seat capacity</div><div class="value" id="capacity">—</div></div>
-        <div class="card"><div class="label">Booked seats</div><div class="value" id="bookedSeats">—</div></div>
-        <div class="card"><div class="label">Available seats</div><div class="value" id="availableSeats">—</div></div>
-    </section>
+  <div id="notice" class="notice" role="status" aria-live="polite"></div>
 
-    <section class="grid">
-        <div class="card">
-            <h2>Assigned bus details 🚌</h2>
-            <div class="detail"><span>Bus number</span><strong id="busDetail">—</strong></div>
-            <div class="detail"><span>Bus name</span><strong id="busName">—</strong></div>
-            <div class="detail"><span>Driver code</span><strong id="driverDetailCode">—</strong></div>
-            <div class="detail"><span>Route</span><strong id="routeNames">—</strong></div>
-            <div class="detail"><span>Pickup times</span><strong id="pickupTimes">—</strong></div>
-            <div class="detail"><span>Occupancy</span><strong id="occupancyText">—</strong></div>
-            <div class="progress"><div id="occupancyBar" style="width:0%"></div></div>
-        </div>
+  <section class="stats">
+    <div class="card"><div class="label">Assigned bus</div><div class="value" id="busNumber">—</div></div>
+    <div class="card"><div class="label">Seat capacity</div><div class="value" id="capacity">—</div></div>
+    <div class="card"><div class="label">Booked seats</div><div class="value" id="bookedSeats">—</div></div>
+    <div class="card"><div class="label">Available seats</div><div class="value" id="availableSeats">—</div></div>
+  </section>
 
-        <div class="card">
-            <div class="toolbar">
-                <h2>Passenger bookings</h2>
-                <button class="btn primary" id="refreshButton">↻ Refresh</button>
-            </div>
-            <p style="color:var(--muted);font-size:14px;line-height:1.7">
-                Passenger information is loaded from the database. Only bookings for your assigned bus should be shown.
-            </p>
-            <div style="margin-top:20px" class="detail"><span>Total passengers</span><strong id="passengerCount">—</strong></div>
-        </div>
-    </section>
+  <section class="grid">
 
-    <section class="card">
-        <div class="toolbar" style="margin-bottom:20px">
-            <div><h2 style="margin-bottom:6px">Booked students</h2><p style="color:var(--muted);font-size:14px">Passenger list for your assigned bus.</p></div>
-            <input id="passengerSearch" class="search" placeholder="Search name or roll number">
-        </div>
-        <div id="passengersTable"><div class="empty">Loading passengers...</div></div>
-    </section>
+    <div class="card">
+      <h2>Assigned bus details 🚌</h2>
+      <div class="detail"><span>Bus number</span><strong id="busDetail">—</strong></div>
+      <div class="detail"><span>Bus name</span><strong id="busName">—</strong></div>
+      <div class="detail"><span>Driver code</span><strong id="driverDetailCode">—</strong></div>
+      <div class="detail"><span>Trip</span><strong id="tripDetail">—</strong></div>
+      <div class="detail"><span>Route / Areas</span><strong id="routeNames">—</strong></div>
+      <div class="detail"><span>Pickup times</span><strong id="pickupTimes">—</strong></div>
+      <div class="detail"><span>Occupancy</span><strong id="occupancyText">—</strong></div>
+      <div class="progress"><div id="occupancyBar" style="width:0%"></div></div>
+    </div>
+
+    <div class="card">
+      <div class="toolbar">
+        <h2>Trip passenger summary</h2>
+        <button class="btn primary" id="refreshButton">↻ Refresh</button>
+      </div>
+
+      <p style="color:var(--muted);font-size:14px;line-height:1.7">
+        This dashboard displays passengers for the trip assigned to your current driver login.
+      </p>
+
+      <div class="detail" style="margin-top:15px"><span>Total passengers</span><strong id="passengerCount">—</strong></div>
+      <div class="detail"><span>Awaiting verification</span><strong id="pendingCount">—</strong></div>
+      <div class="detail"><span id="completedLabel">Boarded</span><strong id="completedCount">—</strong></div>
+
+      <p class="helper" id="tripInstruction">Enter the student's OTP to confirm the trip event.</p>
+    </div>
+
+  </section>
+
+  <!-- DEDICATED OTP VERIFICATION SECTION -->
+
+  <section class="card otp-panel">
+    <h2>🔐 Student OTP Verification</h2>
+
+    <p style="color:var(--muted);font-size:14px;line-height:1.7">
+      Enter the 4-digit OTP shown by the student. BusMate will automatically identify the matching active booking and mark the student as
+      <strong id="otpActionLabel">BOARDED</strong>.
+    </p>
+
+    <div class="otp-entry">
+      <input
+        id="driverOtp"
+        type="text"
+        inputmode="numeric"
+        autocomplete="off"
+        maxlength="4"
+        pattern="[0-9]{4}"
+        placeholder="••••"
+        aria-label="Enter student's four digit OTP"
+      >
+
+      <button class="btn primary" id="verifyOtpButton" type="button">
+        Verify OTP & Confirm
+      </button>
+    </div>
+
+    <p class="helper">
+      Do not enter a student's OTP until you have confirmed their physical boarding or drop-off.
+      Each OTP should be single-use and validated by the Java backend.
+    </p>
+
+    <div id="otpResult" class="otp-result" role="status" aria-live="polite"></div>
+  </section>
+
+  <section class="card">
+
+    <div class="toolbar" style="margin-bottom:18px">
+      <div>
+        <h2 style="margin-bottom:6px">Booked students</h2>
+        <p style="color:var(--muted);font-size:14px">
+          All students who booked this bus and trip, including verified passengers. This list resets when you clear the trip.
+        </p>
+      </div>
+
+      <input id="passengerSearch" class="search" placeholder="Search name, roll number or seat">
+    </div>
+
+    <div id="passengersTable">
+      <div class="empty">Loading passengers...</div>
+    </div>
+
+  </section>
+
+  <section class="card" style="margin-top:22px;border:2px solid #fecaca">
+    <div class="toolbar">
+      <div>
+        <h2 style="margin-bottom:6px;color:#991b1b">Trip completed?</h2>
+        <p class="helper" style="margin-top:0">End this trip and remove its booking history for every affected student. Only this assigned bus and trip will be cleared; other buses and trips will remain untouched. Students can book again after this operation.</p>
+      </div>
+      <button class="btn" id="clearTripButton" style="background:#fee2e2;color:#991b1b">Clear this trip's data</button>
+    </div>
+  </section>
+
 </main>
 
 <script>
+"use strict";
+
 const API="/api";
-const state={passengers:[],bus:null};
 
-async function api(path,options={}) {
-    const response=await fetch(API+path,{
-        credentials:"same-origin",
-        ...options,
-        headers:{"Content-Type":"application/json",...(options.headers||{})}
-    });
+const state={
+  passengers:[],
+  bus:null,
+  driver:null,
+  tripType:null,
+  loading:false
+};
 
-    const text=await response.text();
-    let data={};
-    if(text){try{data=JSON.parse(text)}catch{data={message:text}}}
+const $=id=>document.getElementById(id);
 
-    if(response.status===401||response.status===403)
-        throw new Error("Your session is invalid or you do not have permission.");
-    if(!response.ok)throw new Error(data.message||"Request failed.");
-    return data;
+
+async function api(path,options={}){
+
+  const response=await fetch(API+path,{
+    credentials:"same-origin",
+    ...options,
+    headers:{
+      "Content-Type":"application/json",
+      ...(options.headers||{})
+    }
+  });
+
+  const raw=await response.text();
+
+  let data={};
+
+  if(raw){
+    try{
+      data=JSON.parse(raw);
+    }catch{
+      data={message:raw};
+    }
+  }
+
+  if(response.status===401||response.status===403){
+    throw new Error(data.message||"Your driver session is invalid. Please log in again.");
+  }
+
+  if(!response.ok){
+    throw new Error(data.message||`Request failed (${response.status}).`);
+  }
+
+  return data;
 }
+
 
 function escapeHtml(v){
-    return String(v??"").replace(/[&<>"']/g,c=>({
-        "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
-    })[c]);
+
+  return String(v??"").replace(/[&<>"']/g,c=>({
+    "&":"&amp;",
+    "<":"&lt;",
+    ">":"&gt;",
+    '"':"&quot;",
+    "'":"&#39;"
+  }[c]));
+
 }
+
 
 function notice(message,type="success"){
-    const n=document.getElementById("notice");
-    n.textContent=message;n.className="notice "+type;
-    setTimeout(()=>n.className="notice",4500);
+
+  const n=$("notice");
+
+  n.textContent=message;
+  n.className="notice "+type;
+
+  clearTimeout(notice.timer);
+
+  notice.timer=setTimeout(()=>{
+    n.className="notice";
+  },5000);
+
 }
 
-async function loadDriver() {
-    const d=await api("/driver/profile");
-    const driver=d.driver||d;
 
-    document.getElementById("driverName").textContent=driver.fullName||driver.name||"Driver";
-    document.getElementById("driverCode").textContent=driver.driverCode||"";
-    document.getElementById("driverDetailCode").textContent=driver.driverCode||"";
-    document.getElementById("welcomeTitle").textContent=
-        `Hello, ${(driver.fullName||driver.name||"Driver").split(" ")[0]}! 👋`;
+function normaliseTrip(value){
+
+  const v=String(value||"").trim().toUpperCase();
+
+  if(["MORNING","AM"].includes(v))return "MORNING";
+
+  if(["RETURN","EVENING","PM"].includes(v))return "RETURN";
+
+  return null;
+
 }
 
-async function loadBus() {
-    const d=await api("/driver/bus");
-    state.bus=d.bus||d;
 
-    const b=state.bus;
-    const capacity=Number(b.capacity??40);
-    const booked=Number(b.bookedSeats??0);
-    const available=Number(b.availableSeats??Math.max(0,capacity-booked));
-    const percent=capacity?Math.min(100,Math.round(booked/capacity*100)):0;
+function tripLabel(){
 
-    document.getElementById("busNumber").textContent=b.busNumber||"—";
-    document.getElementById("capacity").textContent=capacity;
-    document.getElementById("bookedSeats").textContent=booked;
-    document.getElementById("availableSeats").textContent=available;
-    document.getElementById("busDetail").textContent=b.busNumber||"—";
-    document.getElementById("busName").textContent=b.busName||"Campus bus";
-    document.getElementById("routeNames").textContent=b.routeNames||b.areas||"—";
-    document.getElementById("pickupTimes").textContent=b.pickupTimes||b.pickupTime||"—";
-    document.getElementById("occupancyText").textContent=percent+"%";
-    document.getElementById("occupancyBar").style.width=percent+"%";
+  return state.tripType==="MORNING"
+    ?"MORNING TRIP"
+    :"RETURN / EVENING TRIP";
+
 }
 
-async function loadPassengers() {
-    const d=await api("/driver/passengers");
-    state.passengers=d.items||d.passengers||d;
-    document.getElementById("passengerCount").textContent=state.passengers.length;
-    renderPassengers();
+
+function eventLabel(){
+
+  return state.tripType==="MORNING"
+    ?"Boarding"
+    :"Drop-off";
+
 }
 
-function renderPassengers() {
-    const q=document.getElementById("passengerSearch").value.toLowerCase();
-    const rows=state.passengers.filter(s=>
-        [s.fullName,s.name,s.rollNumber,s.email,s.seatNumber]
-            .some(v=>String(v||"").toLowerCase().includes(q))
+
+function statusForPassenger(s){
+
+  const raw=String(
+    s.tripStatus||
+    s.boardingStatus||
+    s.status||
+    "BOOKED"
+  ).toUpperCase();
+
+  if(raw.includes("DROP"))return "DROPPED";
+  if(raw.includes("BOARD"))return "BOARDED";
+  if(raw.includes("CANCEL"))return "CANCELLED";
+  if(raw.includes("VERIFY")||raw.includes("PENDING"))return "PENDING";
+
+  return raw;
+
+}
+
+
+async function loadDriver(){
+
+  const d=await api("/driver/profile");
+
+  state.driver=d.driver||d;
+
+  const driver=state.driver;
+
+  $("driverName").textContent=
+    driver.fullName||driver.name||"Driver";
+
+  $("driverCode").textContent=
+    driver.driverCode||"";
+
+  $("driverDetailCode").textContent=
+    driver.driverCode||"—";
+
+  $("welcomeTitle").textContent=
+    `Hello, ${(driver.fullName||driver.name||"Driver").split(" ")[0]}! 👋`;
+
+  // The authenticated backend session is authoritative. The selected trip is
+  // saved by login.html only as a cross-check; never default to MORNING here.
+  const serverTrip=normaliseTrip(driver.tripType||driver.assignedTrip||driver.loginTrip);
+  const loginSelectedTrip=normaliseTrip(sessionStorage.getItem("busmateDriverTrip"));
+
+  // The login form sends tripType to /api/login. The backend stores that value
+  // in the authenticated session and returns it from /api/driver/profile.
+  // Never default to MORNING: missing/mismatched values must be corrected.
+  if(!loginSelectedTrip){
+    throw new Error("No trip was saved for this driver login. Please log out, select Morning or Return on the login page, and sign in again.");
+  }
+  if(!serverTrip){
+    throw new Error("The backend did not return the trip selected at login. Restart the updated BusMateServer.java and sign in again.");
+  }
+  if(serverTrip!==loginSelectedTrip){
+    throw new Error(`Trip mismatch: login selected ${loginSelectedTrip}, but the backend session returned ${serverTrip}. Stop the server, replace BusMateServer.java with the updated version, restart it, and log in again.`);
+  }
+  state.tripType=loginSelectedTrip;
+
+  $("tripBadge").textContent=tripLabel();
+
+  $("tripDetail").textContent=state.tripType;
+
+  $("completedLabel").textContent=
+    state.tripType==="MORNING"
+      ?"Boarded"
+      :"Dropped off";
+
+  $("tripInstruction").textContent=
+    `The OTP entered above confirms ${eventLabel().toLowerCase()}.`;
+
+  $("otpActionLabel").textContent=
+    state.tripType==="MORNING"
+      ?"BOARDED"
+      :"DROPPED";
+
+}
+
+
+async function loadBus(){
+
+  const d=await api("/driver/bus");
+
+  state.bus=d.bus||d;
+
+  const b=state.bus;
+
+  const capacity=Number(b.capacity??40);
+
+  const booked=Number(
+    b.bookedSeats??state.passengers.length??0
+  );
+
+  const available=Number(
+    b.availableSeats??Math.max(0,capacity-booked)
+  );
+
+  const percent=capacity
+    ?Math.min(100,Math.round(booked/capacity*100))
+    :0;
+
+  $("busNumber").textContent=b.busNumber||"—";
+
+  $("capacity").textContent=capacity;
+
+  $("bookedSeats").textContent=booked;
+
+  $("availableSeats").textContent=available;
+
+  $("busDetail").textContent=b.busNumber||"—";
+
+  $("busName").textContent=b.busName||"Campus bus";
+
+  $("routeNames").textContent=
+    b.routeNames||b.areas||"—";
+
+  $("pickupTimes").textContent=
+    state.tripType==="MORNING"
+      ?(b.pickupTimes||b.pickupTime||"—")
+      :"Not applicable";
+
+  $("occupancyText").textContent=percent+"%";
+
+  $("occupancyBar").style.width=percent+"%";
+
+}
+
+
+async function loadPassengers(){
+
+  const d=await api(
+    "/driver/passengers?tripType="+encodeURIComponent(state.tripType)
+  );
+
+  const items=Array.isArray(d)
+    ?d
+    :(d.items||d.passengers||[]);
+
+  // The API returns ACTIVE and COMPLETED bookings, but not cancelled rows.
+  state.passengers=items.filter(s=>statusForPassenger(s)!=="CANCELLED");
+
+  $("passengerCount").textContent=state.passengers.length;
+
+  const completed=state.passengers.filter(s=>
+    statusForPassenger(s)===(
+      state.tripType==="MORNING" ? "BOARDED" : "DROPPED"
+    )
+  ).length;
+
+  $("completedCount").textContent=completed;
+
+  $("pendingCount").textContent=state.passengers.filter(s=>
+    statusForPassenger(s)==="BOOKED" || statusForPassenger(s)==="PENDING"
+  ).length;
+
+  renderPassengers();
+
+}
+
+
+function renderPassengers(){
+
+  const q=$("passengerSearch").value.trim().toLowerCase();
+
+  const rows=state.passengers.filter(s=>
+    [
+      s.fullName,
+      s.name,
+      s.rollNumber,
+      s.email,
+      s.seatNumber,
+      s.areaName,
+      s.bookingId
+    ].some(v=>
+      String(v??"").toLowerCase().includes(q)
+    )
+  );
+
+  const target=$("passengersTable");
+
+  if(!rows.length){
+
+    target.innerHTML=
+      '<div class="empty">No booked students found for this trip.</div>';
+
+    return;
+
+  }
+
+  target.innerHTML=`
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Student</th>
+            <th>Roll number</th>
+            <th>Seat</th>
+            <th>${state.tripType==="MORNING"?"Pickup area":"Drop area"}</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+
+        <tbody>
+
+          ${rows.map(s=>{
+
+            const status=statusForPassenger(s);
+
+            return `
+              <tr>
+                <td>
+                  <strong>${escapeHtml(s.fullName||s.name||"—")}</strong>
+                  <br>
+                  <small style="color:var(--muted)">
+                    ${escapeHtml(s.email||"")}
+                  </small>
+                </td>
+
+                <td>${escapeHtml(s.rollNumber||"—")}</td>
+
+                <td>${escapeHtml(s.seatNumber??"—")}</td>
+
+                <td>
+                  ${escapeHtml(
+                    s.areaName||
+                    s.pickupArea||
+                    s.dropArea||
+                    "—"
+                  )}
+                </td>
+
+                <td>
+                  <span class="status ${status.toLowerCase()}">
+                    ${escapeHtml(status)}
+                  </span>
+                </td>
+              </tr>
+            `;
+
+          }).join("")}
+
+        </tbody>
+      </table>
+    </div>
+  `;
+
+}
+
+
+function showOtpResult(message,student=null,isError=false){
+
+  const box=$("otpResult");
+
+  box.className=
+    "otp-result show"+(isError?" error":"");
+
+  if(isError){
+
+    box.textContent=message;
+
+    return;
+
+  }
+
+  const name=
+    student?.fullName||
+    student?.name||
+    "Student identified";
+
+  const roll=student?.rollNumber||"—";
+
+  const seat=student?.seatNumber??"—";
+
+  const status=
+    student?.status||
+    student?.tripStatus||
+    (state.tripType==="MORNING"?"BOARDED":"DROPPED");
+
+  const bus=
+    student?.busNumber||
+    state.bus?.busNumber||
+    "—";
+
+  box.innerHTML=`
+    <strong>✓ ${escapeHtml(message)}</strong>
+    <br>
+    Student: ${escapeHtml(name)}
+    <br>
+    Roll number: ${escapeHtml(roll)}
+    <br>
+    Bus: ${escapeHtml(bus)} · Seat: ${escapeHtml(seat)}
+    <br>
+    Status: <strong>${escapeHtml(status)}</strong>
+    <br>
+    <span>
+      Telegram notification:
+      ${escapeHtml(student?.notificationStatus||"Sent/requested by server")}
+    </span>
+  `;
+
+}
+
+
+async function verifyOtp(){
+
+  const input=$("driverOtp");
+
+  const button=$("verifyOtpButton");
+
+  const otp=input.value.trim();
+
+  if(!/^\d{4}$/.test(otp)){
+
+    showOtpResult(
+      "Enter exactly 4 digits.",
+      null,
+      true
     );
 
-    const target=document.getElementById("passengersTable");
-    if(!rows.length){
-        target.innerHTML='<div class="empty">No matching booked students.</div>';
-        return;
-    }
+    input.focus();
 
-    target.innerHTML=`<div class="table-wrap"><table><thead><tr>
-        <th>Student name</th><th>Roll number</th><th>Seat number</th><th>Pickup area</th>
-        </tr></thead><tbody>${rows.map(s=>`<tr>
-        <td>${escapeHtml(s.fullName||s.name)}</td>
-        <td>${escapeHtml(s.rollNumber)}</td>
-        <td>${escapeHtml(s.seatNumber)}</td>
-        <td>${escapeHtml(s.areaName||"—")}</td>
-        </tr>`).join("")}</tbody></table></div>`;
+    return;
+
+  }
+
+  if(!state.tripType){
+
+    showOtpResult(
+      "Trip is not available for this driver login. Please sign in again.",
+      null,
+      true
+    );
+
+    return;
+
+  }
+
+  button.disabled=true;
+
+  button.textContent="Checking OTP…";
+
+  try{
+
+    const result=await api(
+      "/driver/verify-otp",
+      {
+        method:"POST",
+        body:JSON.stringify({otp})
+      }
+    );
+
+    const student=
+      result.student||
+      result.passenger||
+      result.booking||
+      {};
+
+    const successMessage=
+      result.message||
+      `${eventLabel()} confirmed successfully.`;
+
+    input.value="";
+
+    showOtpResult(
+      successMessage,
+      {
+        ...student,
+        status:
+          student.status||
+          result.status||
+          (state.tripType==="MORNING"?"BOARDED":"DROPPED"),
+
+        notificationStatus:
+          result.telegramNotification||
+          result.notificationStatus||
+          "Sent/requested by server"
+      }
+    );
+
+    notice(`${eventLabel()} verified successfully.`);
+
+    await Promise.all([
+      loadPassengers(),
+      loadBus()
+    ]);
+
+  }catch(e){
+
+    showOtpResult(
+      e.message||"OTP verification failed. Check the code and try again.",
+      null,
+      true
+    );
+
+    notice(e.message||"OTP verification failed.","error");
+
+  }finally{
+
+    button.disabled=false;
+
+    button.textContent="Verify OTP & Confirm";
+
+    input.focus();
+
+  }
+
 }
 
-async function refreshAll() {
-    try {
-        await Promise.all([loadDriver(),loadBus(),loadPassengers()]);
-        notice("Dashboard updated.");
-    } catch(e) { notice(e.message,"error"); }
+
+
+async function clearTripData(){
+  if(!state.tripType || !state.bus?.busId){
+    notice("Assigned bus/trip is not loaded. Refresh and try again.","error");
+    return;
+  }
+  const busLabel=state.bus.busNumber||"your assigned bus";
+  const tripLabelText=state.tripType==="MORNING"?"MORNING":"RETURN / EVENING";
+  const confirmed=confirm(
+    `Clear all booking records for ${busLabel} – ${tripLabelText}?\\n\\n`+
+    "This deletes the booking history for THIS bus and THIS trip for all affected students. Those students can book again after the clear. Other buses and trips remain unchanged. This cannot be undone."
+  );
+  if(!confirmed)return;
+
+  const button=$("clearTripButton");
+  button.disabled=true;
+  button.textContent="Clearing…";
+  try{
+    const result=await api("/driver/clear-data",{
+      method:"POST",
+      body:JSON.stringify({confirm:true})
+    });
+    state.passengers=[];
+    renderPassengers();
+    await Promise.all([loadBus(),loadPassengers()]);
+    $("otpResult").className="otp-result";
+    $("driverOtp").value="";
+    notice(result.message||"This bus and trip's booking data has been cleared.");
+  }catch(e){
+    notice("Could not clear trip data: "+e.message,"error");
+  }finally{
+    button.disabled=false;
+    button.textContent="Clear this trip's data";
+  }
 }
 
-document.getElementById("refreshButton").addEventListener("click",refreshAll);
-document.getElementById("passengerSearch").addEventListener("input",renderPassengers);
+async function refreshAll(){
 
-document.getElementById("logoutButton").addEventListener("click",async()=>{
-    try{await api("/logout",{method:"POST",body:"{}"})}catch(_){}
+  if(state.loading)return;
+
+  state.loading=true;
+
+  $("refreshButton").disabled=true;
+
+  try{
+
+    await loadDriver();
+
+    await Promise.all([
+      loadBus(),
+      loadPassengers()
+    ]);
+
+  }catch(e){
+
+    notice(e.message,"error");
+
+  }finally{
+
+    $("refreshButton").disabled=false;
+
+    state.loading=false;
+
+  }
+
+}
+
+
+$("refreshButton").addEventListener(
+  "click",
+  refreshAll
+);
+
+$("clearTripButton").addEventListener("click",clearTripData);
+
+$("verifyOtpButton").addEventListener(
+  "click",
+  verifyOtp
+);
+
+$("driverOtp").addEventListener(
+  "input",
+  ()=>{
+    $("driverOtp").value=
+      $("driverOtp").value.replace(/\D/g,"").slice(0,4);
+  }
+);
+
+$("driverOtp").addEventListener(
+  "keydown",
+  event=>{
+    if(event.key==="Enter")verifyOtp();
+  }
+);
+
+$("passengerSearch").addEventListener(
+  "input",
+  renderPassengers
+);
+
+$("logoutButton").addEventListener(
+  "click",
+  async()=>{
+
+    try{
+
+      await api(
+        "/logout",
+        {
+          method:"POST",
+          body:"{}"
+        }
+      );
+
+    }catch(_){}
+
     location.href="login.html";
-});
+
+  }
+);
 
 refreshAll();
+
 </script>
 </body>
 </html>

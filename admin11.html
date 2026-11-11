@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BusMate | Admin Dashboard</title>
+
+<style>
+:root{
+ --purple:#6d28d9;--purple-dark:#4c1d95;--pink:#ec4899;
+ --background:#f7f5ff;--white:#fff;--text:#211a35;
+ --muted:#817a94;--border:#ece8f5;--green:#16a34a;
+ --red:#dc2626;--yellow:#d97706;
+}
+*{box-sizing:border-box;margin:0;padding:0;font-family:"Segoe UI",Arial,sans-serif}
+body{background:var(--background);color:var(--text)}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+.layout{display:flex;min-height:100vh}
+.sidebar{
+ width:250px;flex-shrink:0;padding:26px 18px;color:white;
+ background:linear-gradient(160deg,#4c1d95,#7c3aed 65%,#db2777)
+}
+.brand{font-size:27px;font-weight:800;margin:0 0 8px 10px}
+.brand span{color:#f9a8d4}
+.sidebar small{display:block;margin:0 0 25px 10px;color:#e9d5ff}
+.nav-button{
+ display:block;width:100%;padding:13px 15px;margin-bottom:7px;
+ color:#ede9fe;text-align:left;background:transparent;border:0;
+ border-radius:12px;transition:.2s
+}
+.nav-button:hover,.nav-button.active{background:#ffffff30;color:white}
+.main{flex:1;min-width:0;padding:28px}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap;margin-bottom:25px}
+h1{font-size:clamp(24px,3vw,32px)}
+.subtitle{color:var(--muted);margin-top:6px}
+.profile{background:white;padding:12px 18px;border:1px solid var(--border);border-radius:14px;font-weight:600}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px;margin-bottom:25px}
+.card{background:white;padding:23px;border:1px solid var(--border);border-radius:20px;box-shadow:0 8px 25px #4128780b;margin-bottom:20px}
+.stat-label{color:var(--muted);font-size:14px}
+.stat-number{font-size:30px;font-weight:800;margin-top:12px;color:var(--purple-dark)}
+.toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:20px}
+.toolbar h2{font-size:21px}
+.toolbar-actions{display:flex;gap:10px;flex-wrap:wrap}
+.btn{border:0;border-radius:10px;padding:11px 16px;font-weight:650;transition:.2s}
+.btn-primary{color:white;background:linear-gradient(110deg,var(--purple),var(--pink))}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 5px 15px #6d28d944}
+.btn-light{background:#f1ebff;color:var(--purple-dark)}
+.btn-danger{background:#fee2e2;color:var(--red)}
+.btn-success{background:#dcfce7;color:#166534}
+.btn-warning{background:#fef3c7;color:#92400e}
+.search{width:min(280px,100%);padding:11px 14px;border:1px solid var(--border);border-radius:10px;outline:none;background:white}
+input:focus,select:focus,textarea:focus{border-color:var(--purple);box-shadow:0 0 0 3px #6d28d91c;outline:none}
+.table-wrap{overflow-x:auto;background:white;border:1px solid var(--border);border-radius:16px}
+table{border-collapse:collapse;width:100%;min-width:750px}
+th,td{padding:14px 15px;text-align:left;border-bottom:1px solid #f0edf6;font-size:14px}
+th{color:#6b6280;background:#faf9ff;font-size:12px;text-transform:uppercase;letter-spacing:.5px}
+.badge{display:inline-block;padding:6px 10px;border-radius:20px;font-size:12px;font-weight:700}
+.badge-green{color:#166534;background:#dcfce7}
+.badge-yellow{color:#92400e;background:#fef3c7}
+.badge-red{color:#991b1b;background:#fee2e2}
+.section{display:none;animation:appear .25s ease}
+.section.active{display:block}
+@keyframes appear{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.notice{display:none;margin-bottom:18px;padding:13px 15px;border-radius:12px}
+.notice.success{display:block;color:#166534;background:#dcfce7}
+.notice.error{display:block;color:#991b1b;background:#fee2e2}
+.empty,.loading{padding:30px;color:var(--muted);text-align:center}
+.modal{position:fixed;inset:0;z-index:10;display:none;align-items:center;justify-content:center;padding:20px;background:#211a3580}
+.modal.open{display:flex}
+.modal-content{width:min(600px,100%);max-height:90vh;overflow-y:auto;padding:25px;border-radius:20px;background:white}
+.modal-content h2{margin-bottom:20px}
+.form-group{margin-bottom:15px}
+.form-group label{display:block;margin-bottom:7px;font-size:13px;font-weight:650}
+.form-group input,.form-group select,.form-group textarea{
+ width:100%;padding:12px;border:1px solid var(--border);
+ border-radius:10px;background:white
+}
+.form-group textarea{min-height:90px;resize:vertical}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.modal-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:22px}
+.section-description{font-size:13px;color:var(--muted);margin-top:6px;line-height:1.6}
+.trip-tabs{display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap}
+.trip-tab{padding:11px 18px;border:1px solid var(--border);background:white;border-radius:10px;font-weight:700;color:var(--purple)}
+.trip-tab.active{background:var(--purple);color:white}
+.request-reason{max-width:240px;white-space:normal;line-height:1.5}
+@media(max-width:1000px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.sidebar{width:210px}}
+@media(max-width:650px){
+ .layout{display:block}.sidebar{width:100%;padding:15px}
+ .brand{font-size:23px}.sidebar small{margin-bottom:15px}
+ .nav-button{display:inline-block;width:auto;margin:0 3px 5px 0;padding:10px}
+ .main{padding:18px 12px}.stats{gap:10px}.card{padding:15px}
+ .stat-number{font-size:24px}.form-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+
+<body>
+<div class="layout">
+
+<aside class="sidebar">
+ <div class="brand">Bus<span>Mate.</span></div>
+ <small>Administration portal</small>
+
+ <button class="nav-button active" data-section="overview">▦ Overview</button>
+ <button class="nav-button" data-section="students">♙ Students</button>
+ <button class="nav-button" data-section="drivers">♧ Drivers</button>
+ <button class="nav-button" data-section="buses">🚌 Buses</button>
+ <button class="nav-button" data-section="routes">⌖ Routes</button>
+ <button class="nav-button" data-section="areas">📍 Areas</button>
+ <button class="nav-button" data-section="requests">✉ Bus Requests</button>
+
+ <button class="nav-button" id="logoutButton" style="margin-top:25px">↪ Logout</button>
+</aside>
+
+<main class="main">
+
+<header class="topbar">
+ <div>
+  <h1 id="pageTitle">Dashboard Overview</h1>
+  <p class="subtitle">Manage BusMate from one place.</p>
+ </div>
+ <div class="profile">🛡️ Administrator</div>
+</header>
+
+<div id="notice" class="notice"></div>
+
+<!-- OVERVIEW -->
+<section id="overview" class="section active">
+
+ <div class="stats">
+  <div class="card"><div class="stat-label">Total Students</div><div class="stat-number" id="totalStudents">—</div></div>
+  <div class="card"><div class="stat-label">Total Drivers</div><div class="stat-number" id="totalDrivers">—</div></div>
+  <div class="card"><div class="stat-label">Total Buses</div><div class="stat-number" id="totalBuses">—</div></div>
+  <div class="card"><div class="stat-label">Pending Requests</div><div class="stat-number" id="totalRequests">—</div></div>
+ </div>
+
+ <div class="card">
+  <div class="toolbar">
+   <h2>System status</h2>
+   <button class="btn btn-primary" onclick="refreshAll()">↻ Refresh data</button>
+  </div>
+  <p id="systemStatus" class="subtitle">Checking connection to the BusMate backend...</p>
+ </div>
+
+</section>
+
+<!-- STUDENTS -->
+<section id="students" class="section">
+ <div class="card">
+  <div class="toolbar">
+   <div><h2>Student management</h2><p class="section-description">Manage student details, gender, login email and password.</p></div>
+   <div class="toolbar-actions">
+    <input class="search" id="studentSearch" placeholder="Search name, roll number or email">
+    <button class="btn btn-primary" onclick="openForm('students')">+ Add student</button>
+   </div>
+  </div>
+  <div id="studentsTable" class="loading">Loading students...</div>
+ </div>
+</section>
+
+<!-- DRIVERS -->
+<section id="drivers" class="section">
+ <div class="card">
+  <div class="toolbar">
+   <div><h2>Driver management</h2><p class="section-description">Manage driver profiles, gender, bus assignment and login password.</p></div>
+   <div class="toolbar-actions">
+    <input class="search" id="driverSearch" placeholder="Search driver or email">
+    <button class="btn btn-primary" onclick="openForm('drivers')">+ Add driver</button>
+   </div>
+  </div>
+  <div id="driversTable" class="loading">Loading drivers...</div>
+ </div>
+</section>
+
+<!-- BUSES -->
+<section id="buses" class="section">
+ <div class="card">
+  <div class="toolbar">
+   <div><h2>Bus management</h2><p class="section-description">Edit bus number, name, capacity, registration and status.</p></div>
+   <div class="toolbar-actions">
+    <input class="search" id="busSearch" placeholder="Search bus number">
+    <button class="btn btn-primary" onclick="openForm('buses')">+ Add bus</button>
+   </div>
+  </div>
+  <div id="busesTable" class="loading">Loading buses...</div>
+ </div>
+</section>
+
+<!-- ROUTES -->
+<section id="routes" class="section">
+ <div class="card">
+  <div class="toolbar">
+   <div><h2>Route management</h2><p class="section-description">Choose a trip to view and manage its bus routes independently.</p></div>
+   <div class="toolbar-actions">
+    <select id="routeTripFilter" class="search" style="width:210px" aria-label="Select trip">
+     <option value="MORNING">🌅 Morning Trip</option>
+     <option value="RETURN">🌆 Return / Evening Trip</option>
+    </select>
+    <button class="btn btn-primary" onclick="openForm('routes')">+ Add route</button>
+   </div>
+  </div>
+  <div id="routesTable" class="loading">Loading routes...</div>
+ </div>
+</section>
+
+<!-- AREAS -->
+<section id="areas" class="section">
+ <div class="card">
+  <div class="toolbar">
+   <div><h2>Area management</h2><p class="section-description">View area IDs and add or edit area names.</p></div>
+   <div class="toolbar-actions">
+    <input class="search" id="areaSearch" placeholder="Search area name or ID">
+    <button class="btn btn-primary" onclick="openForm('areas')">+ Add area</button>
+   </div>
+  </div>
+  <div id="areasTable" class="loading">Loading areas...</div>
+ </div>
+</section>
+
+<!-- REQUESTS -->
+<section id="requests" class="section">
+ <div class="card">
+  <div class="toolbar">
+   <div>
+    <h2>Student Bus Requests</h2>
+    <p class="section-description">Review requests and send approval or rejection messages back to students.</p>
+   </div>
+   <button class="btn btn-light" onclick="loadRequests()">↻ Refresh</button>
+  </div>
+  <div id="requestsTable" class="loading">Loading requests...</div>
+ </div>
+</section>
+
+</main>
+</div>
+
+<!-- EDIT MODAL -->
+<div class="modal" id="editorModal">
+ <div class="modal-content">
+  <h2 id="formTitle">Add record</h2>
+  <form id="editorForm">
+   <div id="formFields"></div>
+   <div class="modal-actions">
+    <button type="button" class="btn btn-light" onclick="closeForm()">Cancel</button>
+    <button class="btn btn-primary" type="submit">Save to database</button>
+   </div>
+  </form>
+ </div>
+</div>
+
+<!-- REQUEST REVIEW MODAL -->
+<div class="modal" id="requestModal">
+ <div class="modal-content">
+  <h2>Review student request</h2>
+  <div id="requestDetails"></div>
+
+  <form id="requestForm">
+   <input type="hidden" id="reviewRequestId">
+   <div class="form-group">
+    <label>Decision</label>
+    <select id="reviewStatus" required>
+     <option value="APPROVED">Approve request</option>
+     <option value="REJECTED">Reject request</option>
+    </select>
+   </div>
+
+   <div class="form-group">
+    <label>Message to student</label>
+    <textarea id="reviewMessage" required placeholder="Enter the reason or approval details that the student should see..."></textarea>
+   </div>
+
+   <div class="modal-actions">
+    <button type="button" class="btn btn-light" onclick="closeRequestModal()">Cancel</button>
+    <button type="submit" class="btn btn-primary">Submit decision</button>
+   </div>
+  </form>
+ </div>
+</div>
+
+<script>
+"use strict";
+
+const API="/api";
+
+const state={
+ students:[],drivers:[],buses:[],routes:[],areas:[],requests:[],
+ editing:null,formType:null,selectedRouteTrip:"MORNING"
+};
+
+const titles={
+ overview:"Dashboard Overview",
+ students:"Student Management",
+ drivers:"Driver Management",
+ buses:"Bus Management",
+ routes:"Route Management",
+ areas:"Area Management",
+ requests:"Student Bus Requests"
+};
+
+async function api(path,options={}){
+ const response=await fetch(API+path,{
+  credentials:"same-origin",
+  ...options,
+  headers:{
+   "Content-Type":"application/json",
+   ...(options.headers||{})
+  }
+ });
+
+ const text=await response.text();
+ let data={};
+
+ if(text){
+  try{data=JSON.parse(text)}
+  catch{data={message:text}}
+ }
+
+ if(response.status===401||response.status===403){
+  throw new Error(data.message||"Your session is invalid or you do not have permission.");
+ }
+
+ if(!response.ok){
+  throw new Error(data.message||"Request failed.");
+ }
+
+ return data;
+}
+
+function showNotice(message,type="success"){
+ const box=document.getElementById("notice");
+ box.textContent=message;
+ box.className="notice "+type;
+ clearTimeout(showNotice.timer);
+ showNotice.timer=setTimeout(()=>box.className="notice",4500);
+}
+
+function escapeHtml(value){
+ return String(value??"").replace(/[&<>"']/g,c=>({
+  "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+ })[c]);
+}
+
+function getList(data,key){
+ if(Array.isArray(data))return data;
+ return data.items||data[key]||[];
+}
+
+function renderTable(containerId,headers,rows){
+ const container=document.getElementById(containerId);
+
+ if(!rows.length){
+  container.innerHTML='<div class="empty">No records found.</div>';
+  return;
+ }
+
+ container.innerHTML=`
+ <div class="table-wrap">
+  <table>
+   <thead><tr>${headers.map(h=>`<th>${h}</th>`).join("")}</tr></thead>
+   <tbody>${rows.join("")}</tbody>
+  </table>
+ </div>`;
+}
+
+function activeBadge(active){
+ return `<span class="badge ${active?"badge-green":"badge-red"}">${active?"Active":"Inactive"}</span>`;
+}
+
+function actionButtons(type,item){
+ const id=Number(item.id);
+ return `
+ <button class="btn btn-light" onclick="openForm('${type}',${id})">Edit</button>
+ <button class="btn btn-danger" onclick="toggleRecord('${type}',${id},${!item.active})">
+ ${item.active?"Deactivate":"Activate"}
+ </button>`;
+}
+
+/* OVERVIEW */
+
+async function loadSummary(){
+ const d=await api("/admin/summary");
+
+ document.getElementById("totalStudents").textContent=d.students??"—";
+ document.getElementById("totalDrivers").textContent=d.drivers??"—";
+ document.getElementById("totalBuses").textContent=d.buses??"—";
+ document.getElementById("totalRequests").textContent=d.pendingRequests??"—";
+
+ document.getElementById("systemStatus").textContent="Connected to the BusMate backend.";
+}
+
+/* STUDENTS */
+
+async function loadStudents(){
+ const d=await api("/admin/students");
+ state.students=getList(d,"students");
+ renderStudents();
+}
+
+function renderStudents(){
+ const q=(document.getElementById("studentSearch").value||"").toLowerCase();
+
+ const list=state.students.filter(s=>
+  [s.fullName,s.name,s.rollNumber,s.email,s.gender]
+   .some(v=>String(v||"").toLowerCase().includes(q))
+ );
+
+ renderTable("studentsTable",
+ ["Name","Roll number","Email","Gender","Status","Actions"],
+ list.map(s=>`
+ <tr>
+  <td>${escapeHtml(s.fullName||s.name)}</td>
+  <td>${escapeHtml(s.rollNumber)}</td>
+  <td>${escapeHtml(s.email)}</td>
+  <td>${escapeHtml(s.gender||"—")}</td>
+  <td>${activeBadge(s.active)}</td>
+  <td>${actionButtons("students",{id:s.studentId??s.id,active:s.active})}</td>
+ </tr>`)
+ );
+}
+
+/* DRIVERS */
+
+async function loadDrivers(){
+ const d=await api("/admin/drivers");
+ state.drivers=getList(d,"drivers");
+ renderDrivers();
+}
+
+function renderDrivers(){
+ const q=(document.getElementById("driverSearch").value||"").toLowerCase();
+
+ const list=state.drivers.filter(d=>
+  [d.fullName,d.name,d.email,d.driverCode,d.busNumber,d.gender]
+   .some(v=>String(v||"").toLowerCase().includes(q))
+ );
+
+ renderTable("driversTable",
+ ["Driver","Driver code","Email","Gender","Assigned bus","Status","Actions"],
+ list.map(d=>`
+ <tr>
+  <td>${escapeHtml(d.fullName||d.name)}</td>
+  <td>${escapeHtml(d.driverCode)}</td>
+  <td>${escapeHtml(d.email)}</td>
+  <td>${escapeHtml(d.gender||"—")}</td>
+  <td>${escapeHtml(d.busNumber||"Not assigned")}</td>
+  <td>${activeBadge(d.active)}</td>
+  <td>${actionButtons("drivers",{id:d.driverId??d.id,active:d.active})}</td>
+ </tr>`)
+ );
+}
+
+/* BUSES */
+
+async function loadBuses(){
+ const d=await api("/admin/buses");
+ state.buses=getList(d,"buses");
+ renderBuses();
+}
+
+function renderBuses(){
+ const q=(document.getElementById("busSearch").value||"").toLowerCase();
+
+ const list=state.buses.filter(b=>
+  [b.busNumber,b.busName,b.registrationNumber]
+   .some(v=>String(v||"").toLowerCase().includes(q))
+ );
+
+ renderTable("busesTable",
+ ["Bus number","Name","Registration","Capacity","Status","Actions"],
+ list.map(b=>`
+ <tr>
+  <td>${escapeHtml(b.busNumber)}</td>
+  <td>${escapeHtml(b.busName)}</td>
+  <td>${escapeHtml(b.registrationNumber||"—")}</td>
+  <td>${escapeHtml(b.capacity)}</td>
+  <td>${activeBadge(b.active)}</td>
+  <td>${actionButtons("buses",{id:b.busId??b.id,active:b.active})}</td>
+ </tr>`)
+ );
+}
+
+/* ROUTES */
+
+async function loadRoutes(){
+ const d=await api("/admin/routes");
+ state.routes=getList(d,"routes");
+ renderRoutes();
+}
+
+function renderRoutes(){
+ const trip=state.selectedRouteTrip;
+ const list=state.routes.filter(r=>String(r.tripType||"").toUpperCase()===trip);
+ const tripLabel=trip==="MORNING"?"Morning":"Return / Evening";
+ renderTable("routesTable",["Bus","Area","Area ID","Pickup time","Route order","Status","Actions"],
+  list.map(r=>`<tr>
+   <td>${escapeHtml(r.busNumber||r.busId)}</td>
+   <td>${escapeHtml(r.areaName||"—")}</td>
+   <td>${escapeHtml(r.areaId??"—")}</td>
+   <td>${escapeHtml(r.pickupTime||"—")}</td>
+   <td>${escapeHtml(r.routeOrder??"—")}</td>
+   <td>${activeBadge(r.active!==false)}</td>
+   <td><button class="btn btn-light" onclick="openForm('routes',${Number(r.routeId??r.id)})">Edit ${tripLabel}</button></td>
+  </tr>`));
+}
+
+function openRouteForm(id=null){
+ const item=id==null?{}:state.routes.find(r=>Number(r.routeId??r.id)===Number(id))||{};
+ state.formType="routes";
+ state.editing=id;
+ const trip=id==null?state.selectedRouteTrip:String(item.tripType||state.selectedRouteTrip).toUpperCase();
+ document.getElementById("formTitle").textContent=`${id==null?"Add":"Edit"} ${trip==="MORNING"?"Morning":"Return / Evening"} route`;
+ document.getElementById("formFields").innerHTML=`
+  ${selectField("tripType","Trip",trip,[
+   {value:"MORNING",label:"🌅 Morning"},
+   {value:"RETURN",label:"🌆 Return / Evening"}
+  ])}
+  ${selectField("busId","Bus",item.busId||"",[
+   {value:"",label:"Select bus"},
+   ...state.buses.map(b=>({value:b.busId??b.id,label:b.busNumber}))
+  ])}
+  ${selectField("areaId","Area",item.areaId||"",[
+   {value:"",label:"Select area"},
+   ...state.areas.map(a=>({value:a.areaId??a.id,label:`${a.areaName} (ID: ${a.areaId??a.id})`}))
+  ])}
+  <div class="form-grid">
+   ${field("pickupTime",(trip==="MORNING"?"Morning":"Return / Evening")+" pickup time","time",item.pickupTime|| (trip==="MORNING"?"06:00":"16:30"))}
+   ${field("routeOrder","Route order","number",item.routeOrder??1)}
+  </div>`;
+ document.getElementById("editorModal").classList.add("open");
+}
+
+async function loadAreas(){
+ const d=await api("/admin/areas");
+ state.areas=getList(d,"areas");
+ renderAreas();
+}
+function renderAreas(){
+ const q=(document.getElementById("areaSearch").value||"").toLowerCase();
+ const list=state.areas.filter(a=>String(a.areaName||"").toLowerCase().includes(q)||String(a.areaId??a.id).includes(q));
+ renderTable("areasTable",["Area ID","Area name","Status","Actions"],list.map(a=>`<tr>
+  <td>${escapeHtml(a.areaId??a.id)}</td><td>${escapeHtml(a.areaName)}</td><td>${activeBadge(a.active!==false)}</td>
+  <td><button class="btn btn-light" onclick="openForm('areas',${Number(a.areaId??a.id)})">Edit</button>
+  <button class="btn ${a.active===false?'btn-success':'btn-danger'}" onclick="toggleRecord('areas',${Number(a.areaId??a.id)},${a.active===false})">${a.active===false?'Activate':'Deactivate'}</button></td>
+ </tr>`));
+}
+
+/* ADD / EDIT FORMS */
+
+function field(name,label,type="text",value="",required=true){
+ return `
+ <div class="form-group">
+  <label for="f_${name}">${label}</label>
+  <input id="f_${name}" name="${name}" type="${type}"
+   value="${escapeHtml(value)}"
+   ${required?"required":""}
+   ${type==="password"?'autocomplete="new-password"':""}>
+ </div>`;
+}
+
+function selectField(name,label,value,options,required=true){
+ return `
+ <div class="form-group">
+  <label for="f_${name}">${label}</label>
+  <select id="f_${name}" name="${name}" ${required?"required":""}>
+   ${options.map(o=>`
+    <option value="${escapeHtml(o.value)}" ${String(value)===String(o.value)?"selected":""}>
+     ${escapeHtml(o.label)}
+    </option>`).join("")}
+  </select>
+ </div>`;
+}
+
+function openForm(type,id=null){
+ if(type==="routes"){
+  openRouteForm(id);
+  return;
+ }
+ state.formType=type;
+ state.editing=id;
+
+ const list=state[type]||[];
+
+ const item=id==null?{}:list.find(x=>
+  Number(x.studentId??x.driverId??x.busId??x.routeId??x.areaId??x.id)===Number(id)
+ )||{};
+
+ document.getElementById("formTitle").textContent=
+  `${id==null?"Add":"Edit"} ${type.slice(0,-1)}`;
+
+ const f=document.getElementById("formFields");
+
+ if(type==="students"){
+  f.innerHTML=`
+   ${field("fullName","Full name","text",item.fullName||item.name||"")}
+   ${field("rollNumber","Roll number","text",item.rollNumber||"")}
+   ${field("email","Email","email",item.email||"")}
+   ${selectField("gender","Gender",item.gender||"MALE",[
+    {value:"MALE",label:"Male"},
+    {value:"FEMALE",label:"Female"},
+    {value:"OTHER",label:"Other"}
+   ])}
+   ${field("password","Password (leave blank to keep unchanged)","password","",false)}
+  `;
+ }
+
+ else if(type==="drivers"){
+  f.innerHTML=`
+   ${field("fullName","Full name","text",item.fullName||item.name||"")}
+   ${field("driverCode","Driver code","text",item.driverCode||"")}
+   ${field("email","Email","email",item.email||"")}
+   ${selectField("gender","Gender",item.gender||"MALE",[
+    {value:"MALE",label:"Male"},
+    {value:"FEMALE",label:"Female"},
+    {value:"OTHER",label:"Other"}
+   ])}
+   ${selectField("busId","Assigned bus",item.busId||"",[
+    {value:"",label:"No bus assigned"},
+    ...state.buses.map(b=>({value:b.busId??b.id,label:b.busNumber}))
+   ],false)}
+   <input type="hidden" name="tripType" value="${escapeHtml(item.tripType||"MORNING")}">
+   ${field("password","Password (leave blank to keep unchanged)","password","",false)}
+  `;
+ }
+
+ else if(type==="buses"){
+  f.innerHTML=`
+   ${field("busNumber","Bus number","text",item.busNumber||"")}
+   ${field("busName","Bus name","text",item.busName||"")}
+   ${field("registrationNumber","Registration number","text",item.registrationNumber||"",false)}
+   ${field("capacity","Seat capacity","number",item.capacity??40)}
+  `;
+ }
+
+ else if(type==="areas"){
+  f.innerHTML=`
+   ${id==null?"":`<div class="form-group"><label>Area ID (system generated)</label><input value="${escapeHtml(item.areaId??item.id??"")}" disabled></div>`}
+   ${field("areaName","Area name","text",item.areaName||"")}
+  `;
+ }
+ document.getElementById("editorModal").classList.add("open");
+}
+
+function closeForm(){
+ document.getElementById("editorModal").classList.remove("open");
+}
+
+/* SAVE RECORD */
+
+document.getElementById("editorForm").addEventListener("submit",async event=>{
+ event.preventDefault();
+ const formData=Object.fromEntries(new FormData(event.target).entries());
+ const id=state.editing,type=state.formType;
+ try{
+  if(type==="routes"){
+   const payload={
+    busId:Number(formData.busId),
+    areaId:Number(formData.areaId),
+    tripType:formData.tripType,
+    pickupTime:formData.pickupTime,
+    routeOrder:Number(formData.routeOrder||1)
+   };
+   if(!payload.busId||!payload.areaId||!payload.pickupTime){
+    throw new Error("Select a bus, area and pickup time.");
+   }
+   const duplicate=state.routes.find(r=>
+    Number(r.busId)===payload.busId && Number(r.areaId)===payload.areaId &&
+    String(r.tripType).toUpperCase()===payload.tripType &&
+    Number(r.routeId??r.id)!==Number(id)
+   );
+   if(duplicate)throw new Error("A route already exists for this bus, area and trip. Edit the existing route instead.");
+   const path=id==null?"/admin/routes":`/admin/routes/${id}`;
+   await api(path,{method:id==null?"POST":"PUT",body:JSON.stringify(payload)});
+  }else{
+   for(const key of Object.keys(formData)){
+    if(key==="password"&&!formData[key])delete formData[key];
+    else if(formData[key]!==""&&["capacity","busId","areaId","routeOrder"].includes(key))formData[key]=Number(formData[key]);
+   }
+   const path=`/admin/${type}`+(id==null?"":`/${id}`);
+   await api(path,{method:id==null?"POST":"PUT",body:JSON.stringify(formData)});
+  }
+  closeForm();showNotice("Changes saved successfully.");await refreshAll();
+ }catch(error){showNotice(error.message,"error");}
+});
+
+/* ACTIVATE / DEACTIVATE */
+
+async function toggleRecord(type,id,active){
+ if(!confirm(`${active?"Activate":"Deactivate"} this record?`))return;
+
+ try{
+  await api(`/admin/${type}/${id}`,{
+   method:"PUT",
+   body:JSON.stringify({active})
+  });
+
+  showNotice("Status updated.");
+  await refreshAll();
+
+ }catch(error){
+  showNotice(error.message,"error");
+ }
+}
+
+/* BUS REQUESTS */
+
+async function loadRequests(){
+ try{
+  const d=await api("/admin/requests");
+  state.requests=getList(d,"requests");
+  renderRequests();
+ }catch(error){
+  document.getElementById("requestsTable").innerHTML=
+   `<div class="empty">${escapeHtml(error.message)}</div>`;
+  throw error;
+ }
+}
+
+function renderRequests(){
+ renderTable("requestsTable",
+ ["Student","Email","Requested area","Trip","Reason","Status","Actions"],
+
+ state.requests.map(r=>`
+ <tr>
+  <td>
+   <strong>${escapeHtml(r.studentName||"—")}</strong><br>
+   <small>${escapeHtml(r.rollNumber||"")}</small>
+  </td>
+  <td>${escapeHtml(r.studentEmail||r.email||"—")}</td>
+  <td>${escapeHtml(r.areaName||"—")}</td>
+  <td>${escapeHtml(r.tripType||"—")}</td>
+  <td><div class="request-reason">${escapeHtml(r.reason||"—")}</div></td>
+  <td>
+   <span class="badge ${
+    r.requestStatus==="APPROVED"?"badge-green":
+    r.requestStatus==="REJECTED"?"badge-red":"badge-yellow"
+   }">${escapeHtml(r.requestStatus||r.status||"PENDING")}</span>
+   ${r.adminMessage?`<br><small>${escapeHtml(r.adminMessage)}</small>`:""}
+  </td>
+  <td>
+   <button class="btn btn-primary" onclick="openRequestReview(${Number(r.requestId??r.id)})">
+    Review
+   </button>
+  </td>
+ </tr>
+ `)
+ );
+}
+
+function openRequestReview(id){
+ const r=state.requests.find(x=>
+  Number(x.requestId??x.id)===Number(id)
+ );
+
+ if(!r)return;
+
+ document.getElementById("reviewRequestId").value=id;
+
+ document.getElementById("requestDetails").innerHTML=`
+ <div class="card">
+  <p><strong>Student:</strong> ${escapeHtml(r.studentName||"—")}</p>
+  <p><strong>Email:</strong> ${escapeHtml(r.studentEmail||r.email||"—")}</p>
+  <p><strong>Area:</strong> ${escapeHtml(r.areaName||"—")}</p>
+  <p><strong>Trip:</strong> ${escapeHtml(r.tripType||"—")}</p>
+  <p><strong>Reason:</strong> ${escapeHtml(r.reason||"—")}</p>
+  <p><strong>Current status:</strong> ${escapeHtml(r.requestStatus||r.status||"PENDING")}</p>
+ </div>
+ `;
+
+ document.getElementById("reviewStatus").value=
+  r.requestStatus==="REJECTED"?"REJECTED":"APPROVED";
+
+ document.getElementById("reviewMessage").value=
+  r.adminMessage||"";
+
+ document.getElementById("requestModal").classList.add("open");
+}
+
+function closeRequestModal(){
+ document.getElementById("requestModal").classList.remove("open");
+}
+
+document.getElementById("requestForm").addEventListener("submit",async event=>{
+ event.preventDefault();
+
+ const id=document.getElementById("reviewRequestId").value;
+
+ const requestStatus=document.getElementById("reviewStatus").value;
+
+ const adminMessage=document.getElementById("reviewMessage").value.trim();
+
+ if(!adminMessage){
+  showNotice("Please enter a message for the student.","error");
+  return;
+ }
+
+ try{
+  await api(`/admin/requests/${id}`,{
+   method:"PUT",
+   body:JSON.stringify({
+    requestStatus,
+    adminMessage
+   })
+  });
+
+  closeRequestModal();
+
+  showNotice(
+   `Request ${requestStatus.toLowerCase()}. Student status updated.`
+  );
+
+  await Promise.all([loadRequests(),loadSummary()]);
+
+ }catch(error){
+  showNotice(error.message,"error");
+ }
+});
+
+/* NAVIGATION */
+
+document.querySelectorAll(".nav-button[data-section]").forEach(button=>{
+ button.addEventListener("click",()=>{
+  document.querySelectorAll(".nav-button[data-section]").forEach(b=>b.classList.remove("active"));
+  document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
+
+  button.classList.add("active");
+
+  document.getElementById(button.dataset.section).classList.add("active");
+
+  document.getElementById("pageTitle").textContent=
+   titles[button.dataset.section];
+ });
+});
+
+/* SEARCH */
+
+document.getElementById("studentSearch").addEventListener("input",renderStudents);
+document.getElementById("driverSearch").addEventListener("input",renderDrivers);
+document.getElementById("busSearch").addEventListener("input",renderBuses);
+document.getElementById("areaSearch").addEventListener("input",renderAreas);
+document.getElementById("routeTripFilter").addEventListener("change",event=>{
+ state.selectedRouteTrip=event.target.value==="RETURN"?"RETURN":"MORNING";
+ renderRoutes();
+});
+
+/* REFRESH */
+
+async function refreshAll(){
+ try{
+  await Promise.all([
+   loadSummary(),loadStudents(),loadDrivers(),loadBuses(),
+   loadRoutes(),loadAreas(),loadRequests()
+  ]);
+  showNotice("Dashboard data refreshed.");
+ }catch(error){
+  document.getElementById("systemStatus").textContent=error.message;
+  showNotice(error.message,"error");
+ }
+}
+
+/* LOGOUT */
+
+document.getElementById("logoutButton").addEventListener("click",async()=>{
+ try{
+  await api("/logout",{method:"POST",body:"{}"});
+ }catch(_){}
+
+ location.href="login.html";
+});
+
+refreshAll();
+
+</script>
+</body>
+</html>

@@ -1,13 +1,25 @@
-# Java build files
-backend/target/
+# Java compiled files
+*.class
+target/
 
-# Secrets and local environment files
+# IDE files
+.vscode/
+.idea/
+*.iml
+
+# Operating system files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Environment and secret files
 .env
 .env.*
 !.env.example
-*.pem
-*.key
 
-# IDE files
-.idea/
-.vscode/
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.bak

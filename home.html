@@ -818,6 +818,31 @@
                 transition-duration: 0.01ms !important;
             }
         }
+
+        /* BusMate trip selection overlay */
+        .trip-modal { display:none; position:fixed; inset:0; z-index:2000; padding:20px; align-items:center; justify-content:center; background:rgba(35,25,70,.58); backdrop-filter:blur(10px); }
+        .trip-modal.show { display:flex; }
+        .trip-modal-panel { width:min(100%,620px); position:relative; overflow:hidden; padding:36px; border:1px solid rgba(255,255,255,.75); border-radius:28px; background:linear-gradient(145deg,#fff 0%,#fbf9ff 100%); box-shadow:0 30px 100px rgba(30,20,75,.28); animation:tripPop .28s ease both; }
+        .trip-modal-panel::before { content:""; position:absolute; width:240px; height:240px; right:-100px; top:-110px; border-radius:50%; background:radial-gradient(circle,rgba(255,119,183,.22),rgba(118,87,246,.08),transparent 70%); pointer-events:none; }
+        .trip-modal-top { display:flex; justify-content:space-between; align-items:flex-start; gap:15px; position:relative; }
+        .trip-modal-kicker { color:var(--primary); font-size:11px; font-weight:800; letter-spacing:1.8px; text-transform:uppercase; margin-bottom:10px; }
+        .trip-modal-panel h2 { font-family:'Manrope',sans-serif; font-size:clamp(25px,4vw,34px); line-height:1.2; letter-spacing:-1px; }
+        .trip-modal-panel .trip-intro { margin:12px 0 25px; color:var(--muted); font-size:14px; line-height:1.7; max-width:460px; }
+        .trip-close { width:38px; height:38px; flex:0 0 38px; border:0; border-radius:13px; background:#f0ebff; color:var(--primary); font-size:25px; cursor:pointer; transition:.2s; }
+        .trip-close:hover { transform:rotate(90deg); background:#e7deff; }
+        .trip-choice-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; position:relative; }
+        .trip-choice { text-align:left; padding:23px; border:1px solid #eae5f8; border-radius:21px; background:white; cursor:pointer; transition:transform .25s,border-color .25s,box-shadow .25s; }
+        .trip-choice:hover, .trip-choice:focus-visible { outline:none; transform:translateY(-5px); border-color:#b9a9ff; box-shadow:0 15px 35px rgba(118,87,246,.14); }
+        .trip-choice-icon { display:grid; place-items:center; width:54px; height:54px; margin-bottom:17px; border-radius:17px; font-size:27px; }
+        .morning-choice .trip-choice-icon { background:linear-gradient(135deg,#fff4d9,#ffe7b3); }
+        .return-choice .trip-choice-icon { background:linear-gradient(135deg,#f0eaff,#ffe7f3); }
+        .trip-choice h3 { font-family:'Manrope',sans-serif; font-size:18px; margin-bottom:8px; }
+        .trip-choice p { color:var(--muted); font-size:13px; line-height:1.65; margin-bottom:18px; }
+        .trip-choice-bottom { display:flex; align-items:center; justify-content:space-between; color:var(--primary); font-size:13px; font-weight:800; }
+        .trip-time { display:inline-block; margin-top:12px; padding:7px 10px; border-radius:9px; background:#f5f2ff; color:#6b55d9; font-size:11px; font-weight:700; }
+        .trip-modal-foot { margin-top:20px; color:#9290a4; font-size:11px; text-align:center; }
+        @keyframes tripPop { from { opacity:0; transform:translateY(15px) scale(.97); } to { opacity:1; transform:translateY(0) scale(1); } }
+        @media(max-width:560px) { .trip-modal-panel { padding:25px 20px; border-radius:23px; } .trip-choice-grid { grid-template-columns:1fr; gap:12px; } .trip-choice { padding:18px; } .trip-choice-icon { width:45px; height:45px; margin-bottom:12px; } .trip-choice p { margin-bottom:10px; } }
     </style>
 </head>
 
@@ -834,7 +859,7 @@
             <a href="#home">Home</a>
             <a href="#features">Features</a>
             <a href="about.html">About</a>
-            <a href="login.html" class="nav-button">Get Started ↗</a>
+            <a href="#trip-selection" class="nav-button" onclick="openTripModal(); return false;">Get Started ↗</a>
         </div>
     </nav>
 
@@ -862,7 +887,7 @@
                 </p>
 
                 <div class="hero-actions">
-                    <a href="login.html" class="primary-button">
+                    <a href="#trip-selection" class="primary-button" onclick="openTripModal(); return false;">
                         Get Started <span>↗</span>
                     </a>
 
@@ -1194,13 +1219,44 @@
                 your daily college commute a little easier.
             </p>
 
-            <a href="login.html" class="primary-button">
+            <a href="#trip-selection" class="primary-button" onclick="openTripModal(); return false;">
                 Get Started with BusMate ↗
             </a>
 
         </section>
 
     </main>
+
+    <!-- Trip selection modal -->
+    <div class="trip-modal" id="tripModal" role="dialog" aria-modal="true" aria-labelledby="tripModalTitle">
+        <div class="trip-modal-panel">
+            <div class="trip-modal-top">
+                <div>
+                    <div class="trip-modal-kicker">Let’s plan your ride</div>
+                    <h2 id="tripModalTitle">Which journey are you booking?</h2>
+                </div>
+                <button class="trip-close" type="button" aria-label="Close trip selection" onclick="closeTripModal()">×</button>
+            </div>
+            <p class="trip-intro">Choose your trip type to continue. You’ll then sign in to BusMate and book your seat.</p>
+            <div class="trip-choice-grid">
+                <button class="trip-choice morning-choice" type="button" onclick="selectTrip('MORNING')">
+                    <div class="trip-choice-icon">🌅</div>
+                    <h3>Morning Trip</h3>
+                    <p>Travel from your pickup area to Rajalakshmi Engineering College.</p>
+                    <span class="trip-time">Pickup route · Morning</span>
+                    <div class="trip-choice-bottom"><span>Choose morning</span><span>↗</span></div>
+                </button>
+                <button class="trip-choice return-choice" type="button" onclick="selectTrip('RETURN')">
+                    <div class="trip-choice-icon">🌇</div>
+                    <h3>Return Trip</h3>
+                    <p>Book your evening journey from college to your destination area.</p>
+                    <span class="trip-time">Departure · 5:20 PM</span>
+                    <div class="trip-choice-bottom"><span>Choose return</span><span>↗</span></div>
+                </button>
+            </div>
+            <div class="trip-modal-foot">Your selected trip will be saved for the booking process.</div>
+        </div>
+    </div>
 
     <!-- Footer -->
     <footer>
@@ -1235,6 +1291,40 @@
 
         document.querySelectorAll(".reveal").forEach((element) => {
             observer.observe(element);
+        });
+
+        // Trip selection flow: Home -> Trip type -> Login
+        function openTripModal() {
+            document.getElementById("tripModal").classList.add("show");
+            document.body.style.overflow = "hidden";
+        }
+
+        function closeTripModal() {
+            document.getElementById("tripModal").classList.remove("show");
+            document.body.style.overflow = "";
+        }
+
+        function selectTrip(trip) {
+            sessionStorage.setItem("busmateTrip", trip);
+            window.location.href = "login.html";
+        }
+
+        document.getElementById("tripModal").addEventListener("click", function(event) {
+            if (event.target === this) closeTripModal();
+        });
+
+        document.addEventListener("keydown", function(event) {
+            if (event.key === "Escape") closeTripModal();
+        });
+
+        // Reopen the trip selector when the user clicks Change on login.html.
+        window.addEventListener("DOMContentLoaded", function() {
+            const params = new URLSearchParams(window.location.search);
+            if (params.get("chooseTrip") === "1") {
+                openTripModal();
+                // Remove the query parameter so refresh does not reopen the modal.
+                history.replaceState({}, document.title, window.location.pathname);
+            }
         });
     </script>
 

@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BusMate | Student Dashboard</title>
+<style>
+:root{--purple:#6d28d9;--pink:#ec4899;--dark:#281a46;--muted:#827991;--bg:#f7f5ff;--border:#ece8f5;--green:#15803d;--red:#b42318}
+*{box-sizing:border-box;margin:0;padding:0;font-family:"Segoe UI",Arial,sans-serif}
+body{background:var(--bg);color:var(--dark)}button,input,select,textarea{font:inherit}button{cursor:pointer}
+header{padding:20px 5%;background:#fff;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap}
+.brand{font-size:27px;font-weight:850;color:var(--purple)}.brand span{color:var(--pink)}
+.profile{background:#f4edff;padding:11px 15px;border-radius:12px;font-size:14px}
+.container{max-width:1250px;margin:auto;padding:30px 22px}
+.welcome{padding:30px;border-radius:24px;color:#fff;background:linear-gradient(115deg,#4c1d95,#7c3aed 65%,#db2777);margin-bottom:22px}
+.welcome h1{font-size:32px;margin-bottom:10px}.welcome p{color:#f3e8ff;line-height:1.6}
+.trip-banner{padding:15px;border-radius:13px;background:#f1eaff;color:var(--purple);font-weight:800;margin-bottom:20px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:17px;margin-bottom:25px}
+.card{background:#fff;border:1px solid var(--border);border-radius:19px;padding:22px;box-shadow:0 8px 25px #35205e08}
+.stat-label{font-size:14px;color:var(--muted)}.stat-value{font-size:29px;font-weight:800;color:var(--purple);margin-top:10px}
+.toolbar{display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap;margin-bottom:18px}
+.controls{display:flex;gap:10px;flex-wrap:wrap}
+select,input,textarea{padding:12px 13px;border:1px solid var(--border);border-radius:10px;background:#fff;outline:none;color:var(--dark)}
+select:focus,input:focus,textarea:focus{border-color:var(--purple);box-shadow:0 0 0 3px #6d28d91a}
+#areaSelect{width:250px;height:48px}
+.btn{border:0;padding:12px 16px;border-radius:10px;font-weight:700;transition:.2s}
+.btn:hover{transform:translateY(-1px);filter:brightness(.98)}
+.primary{color:#fff;background:linear-gradient(110deg,var(--purple),var(--pink))}
+.secondary{background:#f1ebff;color:var(--purple)}.danger{background:#fee2e2;color:#991b1b}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.bus-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.bus-card{background:#fff;border:1px solid var(--border);border-radius:19px;padding:22px;box-shadow:0 5px 20px #35205e08}
+.bus-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}
+.bus-number{font-size:19px;font-weight:800}.bus-name{font-size:13px;color:var(--muted)}
+.badge{padding:6px 9px;border-radius:20px;font-size:12px;background:#dcfce7;color:#166534}
+.badge.full{background:#fee2e2;color:#991b1b}
+.route{font-size:13px;color:#6e6483;line-height:1.7;margin:12px 0}
+.progress{height:8px;border-radius:20px;background:#eee9f8;overflow:hidden}
+.progress div{height:100%;background:linear-gradient(90deg,var(--purple),var(--pink))}
+.bus-card .btn{width:100%;margin-top:16px}
+.notice{display:none;margin-bottom:18px;padding:13px 15px;border-radius:11px}
+.notice.success{display:block;background:#dcfce7;color:#166534}.notice.error{display:block;background:#fee2e2;color:#991b1b}
+.empty{text-align:center;padding:30px;color:var(--muted);grid-column:1/-1}
+.table-wrap{overflow:auto;border:1px solid var(--border);border-radius:14px}
+table{border-collapse:collapse;width:100%;min-width:650px}
+th,td{text-align:left;padding:14px;border-bottom:1px solid #f0edf6;font-size:14px}
+th{background:#faf9ff;color:#706782}
+.status-pill{display:inline-block;padding:6px 10px;border-radius:30px;font-size:12px;font-weight:700;background:#f1ebff;color:var(--purple)}
+.status-pending{background:#fff7ed;color:#c2410c}.status-approved,.status-active{background:#dcfce7;color:#166534}.status-rejected,.status-cancelled{background:#fee2e2;color:#991b1b}
+.modal{display:none;position:fixed;inset:0;z-index:20;background:#211a3580;align-items:center;justify-content:center;padding:15px}
+.modal.open{display:flex}.modal-content{background:#fff;width:min(480px,100%);padding:25px;border-radius:20px;max-height:92vh;overflow:auto;box-shadow:0 25px 80px #20103a40}
+.seat-modal .modal-content{width:min(590px,100%);padding:0;border-radius:22px;overflow:hidden}
+.seat-head{background:linear-gradient(115deg,#4c1d95,#7c3aed 65%,#db2777);color:#fff;padding:18px 22px 22px}
+.seat-head-top{font-weight:750;font-size:17px;display:flex;align-items:center;gap:12px}
+.seat-back{background:#ffffff20;color:#fff;border:1px solid #ffffff35;width:42px;height:42px;border-radius:12px;font-size:20px}
+.seat-head h2{text-align:center;font-size:25px;margin:15px 0 3px}.seat-head p{text-align:center;font-size:13px;color:#f3e8ff}
+.seat-body{padding:20px;background:#fff}.seat-legend{display:flex;justify-content:center;gap:15px;flex-wrap:wrap;font-size:12px;margin-bottom:17px}
+.legend-item{display:flex;align-items:center;gap:6px}.legend-box{display:inline-block;width:13px;height:13px;border-radius:4px;background:#fff;border:1px solid #aaa}
+.legend-box.selected{background:var(--purple);border-color:var(--purple)}.legend-box.booked{background:#777;border-color:#777}.legend-box.restricted{background:#f6b8d0;border-color:#e78eaf}
+.seat-layout{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;padding:18px 12px;border:1px solid #eee;border-radius:13px;background:#fbfaff;max-height:410px;overflow:auto;margin-top:12px}
+.seat{min-height:58px;border:1px solid #e8e2f3;border-radius:9px;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:12px;color:#5b536a}
+.seat-icon{font-size:23px}.seat.available:hover{background:#f1ebff;color:var(--purple);border-color:#c4b5fd}
+.seat.selected{background:var(--purple);border-color:var(--purple);color:#fff}
+.seat.booked{background:#777;border-color:#777;color:#fff;cursor:not-allowed}
+.seat.restricted{background:#fde7ef;border-color:#f3b3ca;color:#a33d59;cursor:not-allowed}
+.seat.aisle{visibility:hidden;pointer-events:none;border:0}
+.seat-foot{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:15px 18px;background:linear-gradient(110deg,#6d28d9,#ec4899);color:#fff}
+.seat-foot .btn{background:#fff;color:var(--purple)}
+.booking-otp{padding:17px;border-radius:14px;background:#f2edff;text-align:center;margin:15px 0}
+.booking-otp strong{display:block;font-size:32px;letter-spacing:8px;color:var(--purple);margin:10px}
+.countdown{font-weight:800;color:#b42318}.otp-cell{display:inline-block;padding:6px 10px;border-radius:8px;background:#f1ebff;color:var(--purple);letter-spacing:2px;font-size:15px}.small-note{font-size:12px;color:var(--muted);line-height:1.6}
+.request-form{display:grid;gap:10px;margin-top:15px}.request-form input,.request-form textarea{width:100%;min-width:0}.request-form textarea{min-height:90px}
+.section-gap{margin-bottom:25px}
+@media(max-width:950px){.bus-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.container{padding:20px 12px}.stats{gap:9px}.card{padding:15px}.bus-grid{grid-template-columns:1fr}.controls{width:100%}#areaSelect{width:100%}.controls button{width:100%}.seat-layout{gap:5px;padding:10px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">Bus<span>Mate.</span></div>
+  <div class="profile">🎓 <span id="studentName">Student</span> · <span id="rollNumber">Loading...</span></div>
+  <button class="btn secondary" id="logoutButton">Logout ↗</button>
+</header>
+
+<main class="container">
+  <section class="welcome"><h1 id="welcomeTitle">Your campus commute, simplified.</h1><p>Choose your area, explore available buses and book your seat.</p></section>
+  <div class="trip-banner">🚌 <span id="tripLabel">Loading trip...</span> · <span id="tripDirection"></span></div>
+  <div id="notice" class="notice" role="status"></div>
+
+  <section class="stats">
+    <div class="card"><div class="stat-label">Available buses</div><div class="stat-value" id="availableBuses">—</div></div>
+    <div class="card"><div class="stat-label">Your trip records</div><div class="stat-value" id="myBookings">—</div></div>
+    <div class="card"><div class="stat-label">Available seats</div><div class="stat-value" id="availableSeats">—</div></div>
+  </section>
+
+  <section class="card section-gap">
+    <div class="toolbar">
+      <div><h2>Find your bus</h2><p class="small-note">Choose your pickup/drop area.</p></div>
+      <div class="controls"><select id="areaSelect"><option value="">Choose area</option></select><button class="btn primary" id="findBuses">Find buses →</button></div>
+    </div>
+  </section>
+
+  <section class="section-gap">
+    <div class="toolbar"><h2 id="busHeading">Available buses</h2></div>
+    <div id="busGrid" class="bus-grid"><div class="empty">Select an area to find buses.</div></div>
+  </section>
+
+  <section class="card section-gap">
+    <div class="toolbar"><div><h2>My bookings</h2><p class="small-note">Your current booking. It disappears after the driver confirms your trip.</p></div><button class="btn secondary" id="refreshBookings">↻ Refresh</button></div>
+    <div id="bookingsTable"><div class="empty">Loading bookings...</div></div>
+  </section>
+
+  <section class="card">
+    <div class="toolbar"><div><h2>My bus requests</h2><p class="small-note">Track administrator decisions for your area requests.</p></div><button class="btn secondary" id="refreshRequests">↻ Refresh requests</button></div>
+    <div id="requestsTable"><div class="empty">Loading requests...</div></div>
+  </section>
+</main>
+
+<!-- SEAT SELECTOR -->
+<div class="modal seat-modal" id="seatModal">
+  <div class="modal-content">
+    <div class="seat-head">
+      <div class="seat-head-top"><button class="seat-back" type="button" onclick="closeSeatModal()" aria-label="Back">←</button>Ticket Booking</div>
+      <h2 id="seatTitle">Select Your Seat</h2>
+      <p id="seatAvailability">Loading seats...</p>
+    </div>
+    <div class="seat-body">
+      <div class="seat-legend">
+        <span class="legend-item"><i class="legend-box"></i> Available</span>
+        <span class="legend-item"><i class="legend-box selected"></i> Selected</span>
+        <span class="legend-item"><i class="legend-box booked"></i> Booked</span>
+        <span class="legend-item"><i class="legend-box restricted"></i> Restricted</span>
+      </div>
+      <p class="small-note">Opposite-gender passengers cannot occupy adjacent seat pairs. Seat restrictions are validated again by the server.</p>
+      <div id="seatLayout" class="seat-layout"><div class="empty">Loading seat information...</div></div>
+      <p class="small-note" id="seatRuleMessage" style="margin-top:10px"></p>
+    </div>
+    <div class="seat-foot"><strong id="selectedSeatLabel">No seat selected</strong><button class="btn" id="continueBooking" onclick="confirmSeatSelection()" disabled>Next →</button></div>
+  </div>
+</div>
+
+<!-- OTP -->
+<div class="modal" id="otpModal">
+  <div class="modal-content">
+    <h2>Booking confirmed 🎟️</h2><p class="small-note">Show this OTP to the driver when boarding.</p>
+    <div class="booking-otp"><span>YOUR BOARDING OTP</span><strong id="bookingOtp">----</strong><span class="small-note">Keep this code private.</span></div>
+    <p class="small-note">You can cancel your booking within five minutes of confirmation.</p>
+    <button class="btn primary" style="margin-top:15px" onclick="closeOtpModal()">Done</button>
+  </div>
+</div>
+
+<!-- REQUEST BUS -->
+<div class="modal" id="requestModal">
+  <div class="modal-content">
+    <h2>Request a Bus 🚌</h2><p class="small-note">No bus is allocated to this area. Submit a request to the administrator.</p>
+    <div class="request-form">
+      <label for="requestStudentName">Student name</label><input id="requestStudentName" readonly>
+      <label for="requestEmail">Email address</label><input id="requestEmail" readonly>
+      <label for="requestAreaName">Requested area</label><input id="requestAreaName" readonly>
+      <label for="requestNote">Reason for requesting a bus</label><textarea id="requestNote" maxlength="500" placeholder="Enter your reason..."></textarea>
+    </div>
+    <div class="toolbar" style="margin-top:18px;margin-bottom:0"><button class="btn secondary" onclick="closeRequest()">Cancel</button><button class="btn primary" id="submitRequestButton" onclick="submitRequest()">Submit request</button></div>
+  </div>
+</div>
+
+<script>
+"use strict";
+
+const API = "/api";
+const selectedTrip = sessionStorage.getItem("busmateTrip") === "RETURN" ? "RETURN" : "MORNING";
+const state = {
+  profile:null, areas:[], buses:[], bookings:[], requests:[],
+  selectedAreaId:null, tripType:selectedTrip, selectedBus:null,
+  seats:[], selectedSeat:null, studentGender:"", timers:new Map()
+};
+
+async function api(path, options={}) {
+  const response = await fetch(API + path, {
+    credentials:"same-origin",
+    ...options,
+    headers:{"Content-Type":"application/json", ...(options.headers||{})}
+  });
+  const raw = await response.text();
+  let data={};
+  if(raw){try{data=JSON.parse(raw)}catch{data={message:raw}}}
+  if(!response.ok) throw new Error(data.message || `Request failed (${response.status})`);
+  return data;
+}
+function unwrapList(data, keys) {
+  if(Array.isArray(data)) return data;
+  for(const key of keys) if(Array.isArray(data?.[key])) return data[key];
+  return [];
+}
+function escapeHtml(value) {
+  return String(value ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+function notice(message,type="success") {
+  const node=document.getElementById("notice");
+  node.textContent=message; node.className="notice "+type;
+  clearTimeout(notice.timer); notice.timer=setTimeout(()=>node.className="notice",5000);
+}
+function normalizeGender(value) {
+  const g=String(value||"").trim().toUpperCase();
+  if(["M","MALE"].includes(g)) return "MALE";
+  if(["F","FEMALE"].includes(g)) return "FEMALE";
+  return g;
+}
+function bookingStatus(b){return String(b.status||b.bookingStatus||"").toUpperCase()}
+function isActiveBooking(b){return String(b.bookingStatus||b.status||"").toUpperCase()==="ACTIVE" && String(b.tripStatus||"BOOKED").toUpperCase()==="BOOKED"}
+function hasBookingAwaitingDriverClear(){
+  return state.bookings.some(b=>["ACTIVE","COMPLETED"].includes(String(b.bookingStatus||b.status||"").toUpperCase()));
+}
+function areaIdOf(a){return a.areaId ?? a.id}
+function busIdOf(b){return b.busId ?? b.id}
+function bookingIdOf(b){return b.bookingId ?? b.id}
+function seatNoOf(s){return String(s.seatNumber ?? s.number ?? s.id ?? "")}
+function isSeatBooked(s){
+  const status=String(s.status||"").toUpperCase();
+  return s.booked===true || s.isBooked===true || ["BOOKED","ACTIVE","OCCUPIED","RESERVED"].includes(status);
+}
+function seatGender(s){return normalizeGender(s.gender||s.studentGender||s.bookedByGender)}
+
+async function loadProfile(){
+  const data=await api("/student/profile");
+  state.profile=data.student||data.profile||data;
+  state.studentGender=normalizeGender(state.profile.gender||state.profile.studentGender);
+  const name=state.profile.fullName||state.profile.name||"Student";
+  document.getElementById("studentName").textContent=name;
+  document.getElementById("rollNumber").textContent=state.profile.rollNumber||state.profile.registerNumber||"";
+  document.getElementById("welcomeTitle").textContent=`Hello, ${name.split(" ")[0]}! 👋`;
+}
+async function loadAreas(){
+  const data=await api("/areas");
+  state.areas=unwrapList(data,["areas","items","data"]);
+  const select=document.getElementById("areaSelect");
+  select.innerHTML='<option value="">Choose area</option>';
+  state.areas.forEach(a=>{
+    const option=document.createElement("option");
+    option.value=areaIdOf(a); option.textContent=a.areaName||a.name||"Unnamed area";
+    select.appendChild(option);
+  });
+}
+async function loadBuses(areaId){
+  state.selectedAreaId=areaId;
+  const data=await api(`/student/buses?areaId=${encodeURIComponent(areaId)}&tripType=${encodeURIComponent(state.tripType)}`);
+  state.buses=unwrapList(data,["buses","items","data"]);
+  renderBuses();
+}
+function renderBuses(){
+  const grid=document.getElementById("busGrid");
+  const area=state.areas.find(a=>String(areaIdOf(a))===String(state.selectedAreaId));
+  document.getElementById("busHeading").textContent=`Buses serving ${area?.areaName||area?.name||"selected area"}`;
+  const requestButton=document.getElementById("extraBusButton");
+  if(requestButton) requestButton.remove();
+
+  if(!state.buses.length){
+    grid.innerHTML='<div class="empty">No buses are allocated to this area for the selected trip.</div>';
+    document.getElementById("availableBuses").textContent="0";
+    document.getElementById("availableSeats").textContent="0";
+    const btn=document.createElement("button");
+    btn.id="extraBusButton";btn.className="btn primary";btn.style.marginTop="15px";
+    btn.textContent="Request a Bus";btn.addEventListener("click",openRequest);
+    grid.after(btn);return;
+  }
+  const locked=hasBookingAwaitingDriverClear();
+  grid.innerHTML=state.buses.map(b=>{
+    const total=Number(b.capacity??b.totalSeats??40);
+    const booked=Number(b.bookedSeats??b.booked??0);
+    const available=Number(b.availableSeats??Math.max(0,total-booked));
+    const full=available<=0;
+    const occupancy=total>0?Math.min(100,Math.round(booked/total*100)):0;
+    return `<article class="bus-card">
+      <div class="bus-top"><div><div class="bus-number">${escapeHtml(b.busNumber||b.number||"Bus")}</div><div class="bus-name">${escapeHtml(b.busName||"Campus Bus")}</div></div>
+      <span class="badge ${full?"full":""}">${full?"FULL":available+" seats"}</span></div>
+      <div class="route">📍 ${escapeHtml(b.routeNames||b.areaName||area?.areaName||area?.name||"Campus Route")}<br>
+      ⏰ ${state.tripType==="MORNING"?"Pickup":"Drop"}: ${escapeHtml(state.tripType==="MORNING"?(b.pickupTime||"Not specified"):(b.dropTime||"Not specified"))}</div>
+      <p class="small-note">${booked}/${total} seats occupied</p><div class="progress"><div style="width:${occupancy}%"></div></div>
+      <button class="btn ${full||locked?"secondary":"primary"}" ${full||locked?"disabled":""} data-bus-id="${escapeHtml(busIdOf(b))}">
+        ${full?"Bus Full":locked?"Waiting for driver to clear trip":"Select Seats"}</button>
+    </article>`;
+  }).join("");
+  grid.querySelectorAll("[data-bus-id]").forEach(btn=>btn.addEventListener("click",()=>bookBus(btn.dataset.busId)));
+  document.getElementById("availableBuses").textContent=state.buses.length;
+  document.getElementById("availableSeats").textContent=state.buses.reduce((sum,b)=>sum+Number(b.availableSeats??Math.max(0,Number(b.capacity??b.totalSeats??40)-Number(b.bookedSeats??0))),0);
+}
+async function findBuses(){
+  const areaId=document.getElementById("areaSelect").value;
+  if(!areaId){notice("Please select an area first.","error");return}
+  try{await loadBuses(areaId)}catch(e){notice("Unable to load buses: "+e.message,"error")}
+}
+function seatResponseList(data){
+  // Accepts: array, {seats:[]}, {data:[]}, {availableSeats:[], bookedSeats:[]}.
+  let list=unwrapList(data,["seats","items","data","seatDetails"]);
+  if(list.length) return list;
+  if(Array.isArray(data?.availableSeats)||Array.isArray(data?.bookedSeats)){
+    const combined=[...(data.availableSeats||[]),...(data.bookedSeats||[])];
+    return combined.map(s=>({
+      ...s,
+      status:s.status || ((data.bookedSeats||[]).includes(s) ? "BOOKED" : "AVAILABLE")
+    }));
+  }
+  return [];
+}
+async function bookBus(busId){
+  if(hasBookingAwaitingDriverClear()){notice("Your previous trip is not cleared yet. You can book again only after the driver clears that bus trip.","error");return}
+  const bus=state.buses.find(b=>String(busIdOf(b))===String(busId));
+  if(!bus){notice("Bus not found. Refresh the bus list.","error");return}
+  state.selectedBus=bus;state.selectedSeat=null;state.seats=[];
+  document.getElementById("seatTitle").textContent=`Select Your Seat · ${bus.busNumber||bus.number||""}`;
+  document.getElementById("seatAvailability").textContent="Loading seat availability...";
+  document.getElementById("seatLayout").innerHTML='<div class="empty">Loading seat information...</div>';
+  updateSelectedSeat();document.getElementById("seatModal").classList.add("open");
+  try{
+    const data=await api(`/student/seats?busId=${encodeURIComponent(busId)}&tripType=${encodeURIComponent(state.tripType)}`);
+    state.seats=seatResponseList(data);
+    if(!state.seats.length){
+      document.getElementById("seatAvailability").textContent="Seat data unavailable";
+      document.getElementById("seatLayout").innerHTML='<div class="empty">The server returned no seat records. The Java seat API must return all seats for this bus and trip.</div>';
+      document.getElementById("seatRuleMessage").textContent="Check the /api/student/buses/{busId}/seats endpoint and its JSON response.";
+      return;
+    }
+    // Sort numeric seat labels where possible to keep a stable physical layout.
+    state.seats.sort((a,b)=>{
+      const x=Number(seatNoOf(a)),y=Number(seatNoOf(b));
+      return Number.isFinite(x)&&Number.isFinite(y)?x-y:String(seatNoOf(a)).localeCompare(String(seatNoOf(b)));
+    });
+    renderSeatMap();
+  }catch(e){
+    document.getElementById("seatAvailability").textContent="Could not load seats";
+    document.getElementById("seatLayout").innerHTML=`<div class="empty">${escapeHtml(e.message)}</div>`;
+    notice("Seat API error: "+e.message,"error");
+  }
+}
+function closeSeatModal(){document.getElementById("seatModal").classList.remove("open")}
+function isGenderRestricted(index){
+  if(!state.studentGender)return false;
+  // The visual layout uses adjacent pairs: 1-2, 3-4, etc.
+  const pairStart=Math.floor(index/2)*2;
+  return [pairStart,pairStart+1].some(i=>{
+    if(i===index||!state.seats[i])return false;
+    const other=state.seats[i];
+    return isSeatBooked(other)&&seatGender(other)&&seatGender(other)!==state.studentGender;
+  });
+}
+function renderSeatMap(){
+  const layout=document.getElementById("seatLayout");
+  const available=state.seats.filter(s=>!isSeatBooked(s)).length;
+  document.getElementById("seatAvailability").textContent=`${available} seats available`;
+  let html="";
+  state.seats.forEach((s,index)=>{
+    // Two seats, aisle, two seats: visual 2+aisle+2 layout.
+    if(index%4===2) html+='<div class="seat aisle" aria-hidden="true"></div>';
+    const booked=isSeatBooked(s),restricted=!booked&&isGenderRestricted(index);
+    const selected=state.selectedSeat===seatNoOf(s);
+    const cls=booked?"booked":restricted?"restricted":selected?"selected":"available";
+    html+=`<button type="button" class="seat ${cls}" ${booked||restricted?"disabled":""} data-seat-index="${index}" aria-label="Seat ${escapeHtml(seatNoOf(s))} ${cls}">
+      <span class="seat-icon">▣</span><span>${escapeHtml(s.label||seatNoOf(s))}</span></button>`;
+  });
+  layout.innerHTML=html;
+  layout.querySelectorAll("[data-seat-index]").forEach(btn=>btn.addEventListener("click",()=>selectSeat(Number(btn.dataset.seatIndex))));
+  document.getElementById("seatRuleMessage").textContent="Adjacent opposite-gender seats are restricted. The backend must validate the same rule when booking.";
+  updateSelectedSeat();
+}
+function updateSelectedSeat(){
+  document.getElementById("selectedSeatLabel").textContent=state.selectedSeat?`Selected seat: ${state.selectedSeat}`:"No seat selected";
+  document.getElementById("continueBooking").disabled=!state.selectedSeat;
+}
+function selectSeat(index){
+  const seat=state.seats[index];
+  if(!seat||isSeatBooked(seat)||isGenderRestricted(index))return;
+  state.selectedSeat=seatNoOf(seat);renderSeatMap();
+}
+async function confirmSeatSelection(){
+  if(!state.selectedBus||!state.selectedSeat)return;
+  if(hasBookingAwaitingDriverClear()){notice("Your previous trip is not cleared yet. Wait until the driver clears that bus trip.","error");return}
+  const btn=document.getElementById("continueBooking");btn.disabled=true;
+  try{
+    const result=await api("/student/bookings",{method:"POST",body:JSON.stringify({
+      busId:Number(busIdOf(state.selectedBus)),areaId:Number(state.selectedAreaId),
+       seatNumber:Number(state.selectedSeat),tripType:state.tripType
+    })});
+    const booking=result.booking||result.data||result;
+    const otp=booking.otp||booking.bookingOtp||result.otp||result.bookingOtp;
+    closeSeatModal();
+    if(otp!==undefined&&otp!==null){
+      document.getElementById("bookingOtp").textContent=String(otp).padStart(4,"0");
+      document.getElementById("otpModal").classList.add("open");
+    }else notice("Booking response did not include an OTP. Check the Java booking API.","error");
+    notice("Seat booking completed.");
+    await loadMyBookings();if(state.selectedAreaId)await loadBuses(state.selectedAreaId);
+  }catch(e){notice("Booking failed: "+e.message,"error")}
+  finally{btn.disabled=!state.selectedSeat}
+}
+function closeOtpModal(){document.getElementById("otpModal").classList.remove("open")}
+
+async function loadMyBookings(){
+  const data=await api("/student/bookings");
+  state.bookings=unwrapList(data,["bookings","items","data"]);
+  document.getElementById("myBookings").textContent=state.bookings.length;
+  renderBookings();renderBusesIfLoaded();
+}
+function renderBusesIfLoaded(){if(state.selectedAreaId!==null)renderBuses()}
+function parseServerDate(value){
+  if(!value)return NaN;
+  // MySQL DATETIME is returned as "YYYY-MM-DD HH:mm:ss"; normalize for Chrome.
+  const text=String(value).replace(" ","T");
+  const date=new Date(text);
+  return date.getTime();
+}
+function getCancelExpiry(b){
+  if(b.cancelExpiresAt||b.cancellationExpiresAt)
+    return parseServerDate(b.cancelExpiresAt||b.cancellationExpiresAt);
+  const bookedAt=b.bookedAt||b.createdAt;
+  const stamp=parseServerDate(bookedAt);
+  return Number.isFinite(stamp)?stamp+300000:NaN;
+}
+function formatRemaining(seconds){
+  return `${Math.floor(seconds/60)}:${String(seconds%60).padStart(2,"0")}`;
+}
+function renderBookings(){
+  state.timers.forEach(timer=>clearInterval(timer));
+  state.timers.clear();
+  const target=document.getElementById("bookingsTable");
+  const bookingRows=state.bookings.filter(b=>
+    ["ACTIVE","COMPLETED"].includes(String(b.bookingStatus||b.status||"").toUpperCase())
+  );
+  if(!bookingRows.length){
+    target.innerHTML='<div class="empty">No trip booking records. You can book a seat now.</div>';
+    return;
+  }
+  target.innerHTML=`<div class="table-wrap"><table>
+    <thead><tr><th>Trip</th><th>Bus</th><th>Seat</th><th>Area</th><th>OTP</th><th>Status</th><th>Cancel time</th><th>Action</th></tr></thead>
+    <tbody>${bookingRows.map(b=>{
+      const id=bookingIdOf(b);
+      const bookingStatus=String(b.bookingStatus||b.status||"").toUpperCase();
+      const tripStatus=String(b.tripStatus||"BOOKED").toUpperCase();
+      const completed=bookingStatus==="COMPLETED" || ["BOARDED","DROPPED"].includes(tripStatus);
+      const expiry=getCancelExpiry(b);
+      const remaining=Math.max(0,Math.floor((expiry-Date.now())/1000));
+      const canCancel=!completed&&bookingStatus==="ACTIVE"&&tripStatus==="BOOKED"&&Number.isFinite(expiry)&&remaining>0;
+      const otp=completed?"—":(b.otp||b.otpCode||b.bookingOtp||"—");
+      const displayStatus=completed?tripStatus:bookingStatus;
+      const statusClass=completed?"status-approved":"status-active";
+      return `<tr>
+        <td>${escapeHtml(b.tripType||"—")}</td><td>${escapeHtml(b.busNumber||"—")}</td>
+        <td>${escapeHtml(b.seatNumber??"—")}</td><td>${escapeHtml(b.areaName||"—")}</td>
+        <td><strong class="otp-cell">${escapeHtml(otp)}</strong></td>
+        <td><span class="status-pill ${statusClass}">${escapeHtml(displayStatus)}</span></td>
+        <td>${canCancel?`<span class="countdown" id="timer-${escapeHtml(id)}" data-expires="${expiry}">${formatRemaining(remaining)}</span>`:(completed?"Trip verified":"Cancellation closed")}</td>
+        <td>${canCancel?`<button class="btn danger" data-cancel-id="${escapeHtml(id)}">Cancel</button>`:"—"}</td>
+      </tr>`;
+    }).join("")}</tbody></table></div>
+    <p class="small-note" style="margin-top:12px">Completed booking records remain here until the driver clears this bus and trip. You can book another trip only after that clear operation.</p>`;
+  target.querySelectorAll("[data-cancel-id]").forEach(btn=>btn.addEventListener("click",()=>cancelBooking(btn.dataset.cancelId)));
+  bookingRows.forEach(b=>{
+    const bookingStatus=String(b.bookingStatus||b.status||"").toUpperCase();
+    const tripStatus=String(b.tripStatus||"BOOKED").toUpperCase();
+    if(bookingStatus!=="ACTIVE"||tripStatus!=="BOOKED")return;
+    const id=bookingIdOf(b);
+    const node=document.getElementById("timer-"+CSS.escape(String(id)));
+    if(!node)return;
+    const expiry=Number(node.dataset.expires);
+    const tick=()=>{
+      const left=Math.max(0,Math.floor((expiry-Date.now())/1000));
+      node.textContent=formatRemaining(left);
+      if(left<=0){
+        clearInterval(state.timers.get(String(id)));
+        state.timers.delete(String(id));
+        const cancelButton=target.querySelector(`[data-cancel-id="${CSS.escape(String(id))}"]`);
+        if(cancelButton)cancelButton.remove();
+        node.textContent="Cancellation closed";
+      }
+    };
+    tick();
+    if(expiry>Date.now())state.timers.set(String(id),setInterval(tick,1000));
+  });
+}
+async function cancelBooking(id){
+  const booking=state.bookings.find(b=>String(bookingIdOf(b))===String(id));
+  if(!booking){notice("Booking not found.","error");return}
+  const expiry=getCancelExpiry(booking);
+  if(!isActiveBooking(booking)||!Number.isFinite(expiry)||Date.now()>=expiry){notice("The five-minute cancellation period has expired.","error");await loadMyBookings();return}
+  if(!confirm("Cancel this booking?"))return;
+  try{
+    await api(`/student/bookings/${encodeURIComponent(id)}`,{method:"DELETE"});
+    notice("Booking cancelled. You may now book another seat.");
+    await loadMyBookings();if(state.selectedAreaId)await loadBuses(state.selectedAreaId);
+  }catch(e){notice("Cancellation failed: "+e.message,"error")}
+}
+
+function openRequest(){
+  const area=state.areas.find(a=>String(areaIdOf(a))===String(state.selectedAreaId));
+  document.getElementById("requestStudentName").value=state.profile?.fullName||state.profile?.name||"";
+  document.getElementById("requestEmail").value=state.profile?.email||state.profile?.emailId||"";
+  document.getElementById("requestAreaName").value=area?.areaName||area?.name||"";
+  document.getElementById("requestNote").value="";
+  document.getElementById("requestModal").classList.add("open");
+}
+function closeRequest(){document.getElementById("requestModal").classList.remove("open")}
+async function submitRequest(){
+  const reason=document.getElementById("requestNote").value.trim();
+  if(!reason){notice("Please enter a reason for the request.","error");return}
+  const btn=document.getElementById("submitRequestButton");btn.disabled=true;
+  try{
+    await api("/student/requests",{method:"POST",body:JSON.stringify({areaId:Number(state.selectedAreaId),tripType:state.tripType,requestNote:reason})});
+    closeRequest();notice("Bus request submitted. You can track its status below.");
+    await loadMyRequests();
+  }catch(e){notice("Request submission failed: "+e.message,"error")}
+  finally{btn.disabled=false}
+}
+async function loadMyRequests(){
+  const data=await api("/student/requests");
+  state.requests=unwrapList(data,["requests","items","data"]);
+  renderRequests();
+}
+function renderRequests(){
+  const target=document.getElementById("requestsTable");
+  if(!state.requests.length){target.innerHTML='<div class="empty">You have not submitted any bus requests yet.</div>';return}
+  target.innerHTML=`<div class="table-wrap"><table><thead><tr><th>Area</th><th>Trip</th><th>Reason</th><th>Requested on</th><th>Admin status</th><th>Admin response</th></tr></thead><tbody>
+  ${state.requests.map(r=>{
+    const status=String(r.status||r.requestStatus||"PENDING").toUpperCase();
+    const cls=status==="APPROVED"?"status-approved":status==="REJECTED"||status==="DENIED"?"status-rejected":"status-pending";
+    return `<tr><td>${escapeHtml(r.areaName||r.area||"—")}</td><td>${escapeHtml(r.tripType||"—")}</td><td>${escapeHtml(r.requestNote||r.reason||"—")}</td><td>${escapeHtml(r.requestedAt||r.createdAt||"—")}</td><td><span class="status-pill ${cls}">${escapeHtml(status)}</span></td><td>${escapeHtml(r.adminResponse||r.responseNote||"—")}</td></tr>`;
+  }).join("")}</tbody></table></div>`;
+}
+
+document.getElementById("findBuses").addEventListener("click",findBuses);
+document.getElementById("refreshBookings").addEventListener("click",async()=>{
+  try{await loadMyBookings();notice("Bookings refreshed.")}catch(e){notice(e.message,"error")}
+});
+document.getElementById("refreshRequests").addEventListener("click",async()=>{
+  try{await loadMyRequests();notice("Request statuses refreshed.")}catch(e){notice("Unable to load request statuses: "+e.message,"error")}
+});
+document.getElementById("logoutButton").addEventListener("click",async()=>{
+  try{await api("/logout",{method:"POST",body:"{}"})}catch(e){}
+  sessionStorage.removeItem("busmateTrip");location.href="login.html";
+});
+
+async function init(){
+  document.getElementById("tripLabel").textContent=state.tripType==="MORNING"?"Morning Trip":"Return / Evening Trip";
+  document.getElementById("tripDirection").textContent=state.tripType==="MORNING"?"Pickup area → College":"College → Drop area";
+  document.getElementById("busHeading").textContent=state.tripType==="MORNING"?"Morning buses":"Return buses";
+  const results=await Promise.allSettled([loadProfile(),loadAreas(),loadMyBookings(),loadMyRequests()]);
+  const labels=["Profile","Areas","Bookings","Bus requests"];
+  results.forEach((r,i)=>{if(r.status==="rejected")notice(`${labels[i]} could not load: ${r.reason.message}`,"error")});
+}
+init();
+</script>
+</body>
+</html>
